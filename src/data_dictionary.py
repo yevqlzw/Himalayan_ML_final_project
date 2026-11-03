@@ -53,7 +53,7 @@ NOTES = {
     "MSMTTERM": "Filter: drop 17 (Did not climb or intent to summit).",
     "MDISPUTED": DISPUTED,
     "MCLAIMED": DISPUTED,
-    "O2CLIMB": "Actual use, not a plan: excluded from prediction. Treatment in the causal analysis.",
+    "O2CLIMB": "Actual use, not a plan: excluded from prediction.",
     "ROUTE1": ("Feature. Contains after-the-fact notes '(to 6000m)' (in 1990-2025 only in unsuccessful "
                "expeditions), '(intended)', '(up)/(down)'; removed in dataset_v1."),
     **{f"ROUTE{i}": "Not a feature. Contains the same after-the-fact notes as ROUTE1." for i in range(2, 5)},
