@@ -80,3 +80,8 @@ reports/figures/     figures for the report
 
 | Date | Who | Model / change | ROC AUC (val) | Brier (val) | Conclusion |
 |---|---|---|---|---|---|
+| 2026-11-03 | B | B baseline (a) constant = train mean | 0.500 [0.500, 0.500] | 0.271 [0.265, 0.276] | LL 0.736; no-anomalous val: AUC 0.500, Brier 0.274, LL 0.742. Reference. Val success rate is higher than train, so Brier/log loss show the shift. |
+| 2026-11-03 | B | B baseline (b) peak x season rate (past) | 0.601 [0.569, 0.633] | 0.250 [0.242, 0.256] | LL 0.693; no-anomalous val: AUC 0.614, Brier 0.249, LL 0.692. Rule baseline, no ML; peak x season, past years only. |
+| 2026-11-03 | B | B baseline (b2) PEAK_SUCCESS_PRIOR feature | 0.543 [0.508, 0.574] | 0.274 [0.264, 0.281] | LL 0.746; no-anomalous val: AUC 0.546, Brier 0.278, LL 0.753. Existing feature used as probability (peak only, not season-specific). |
+| 2026-11-03 | B | B baseline (c) logreg + age hinge@40 | 0.686 [0.654, 0.713] | 0.228 [0.218, 0.242] | LL 0.656; no-anomalous val: AUC 0.714, Brier 0.217, LL 0.627. Linear model with age knot at 40; YEAR excluded. |
+| 2026-11-03 | B | B baseline (d) CatBoost default | 0.709 [0.678, 0.737] | 0.221 [0.212, 0.230] | LL 0.633; no-anomalous val: AUC 0.731, Brier 0.214, LL 0.616. Default params, early stopping on a grouped fold inside train; YEAR excluded. |
