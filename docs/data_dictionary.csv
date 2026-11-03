@@ -46,7 +46,7 @@ exped,HDEATHS,Int64,0.0,0.0,0 ... 11,Nbr of hired personnel deaths,,after,Used f
 exped,NOHIRED,bool,0.0,0.0,False | True,No hired personnel used (above BC),,before,
 exped,O2USED,bool,0.0,0.0,False | True,Oxygen used (Y/N),,after,
 exped,O2NONE,bool,0.0,0.0,True | False,Oxygen not used (Y/N),,after,
-exped,O2CLIMB,bool,0.0,0.0,False | True,Oxygen climbing (Y/N),,after,"Actual use, not a plan: excluded from prediction. Treatment in the causal analysis."
+exped,O2CLIMB,bool,0.0,0.0,False | True,Oxygen climbing (Y/N),,after,"Actual use, not a plan: excluded from prediction."
 exped,O2DESCENT,bool,0.0,0.0,False | True,Oxygen descending (Y/N),,after,
 exped,O2SLEEP,bool,0.0,0.0,False | True,Oxygen sleeping (Y/N),,after,
 exped,O2MEDICAL,bool,0.0,0.0,False | True,Oxygen used medically (Y/N),,after,
