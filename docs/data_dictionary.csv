@@ -1,0 +1,170 @@
+﻿table,field,dtype,missing_pct,missing_pct_model,examples,description,codes,timing,note
+exped,EXPID,str,0.0,0.0,EVER21101 | EVER22101 | EVER24101,Expedition ID,,technical,"Identifier, not a feature. Not unique on its own: the key is (EXPID, YEAR). Groups for GroupKFold."
+exped,PEAKID,str,0.0,0.0,EVER | AMAD | CHOY,Peak ID,,before,Feature; peaks with < 100 records -> OTHER.
+exped,YEAR,Int64,0.0,0.0,1905 ... 2025,Year,,before,Key together with EXPID. Text in DBF; 0 or empty -> NaN.
+exped,SEASON,Int64,0.0,0.0,3 | 1 | 4,Season,0=Unknown; 1=Spring; 2=Summer; 3=Autumn; 4=Winter,before,
+exped,HOST,Int64,0.0,0.0,1 | 2 | 3,Host country,0=Unknown; 1=Nepal; 2=China; 3=India,before,Feature. 0 = Unknown -> NaN in dataset_v1.
+exped,ROUTE1,str,1.5,1.3,SW Ridge | S Col-SE Ridge | NW side,Climbing route 1,,before,"Feature. Contains after-the-fact notes '(to 6000m)' (in 1990-2025 only in unsuccessful expeditions), '(intended)', '(up)/(down)'; removed in dataset_v1."
+exped,ROUTE2,str,96.9,97.7,S Col-W Face | W Face | N Face,Climbing route 2,,before,Not a feature. Contains the same after-the-fact notes as ROUTE1.
+exped,ROUTE3,str,99.7,99.9,W Ridge-W Face from S | E Ridge up; SE Face down | N Face-N Ridge (to 7315m),Climbing route 3,,before,Not a feature. Contains the same after-the-fact notes as ROUTE1.
+exped,ROUTE4,str,100.0,100.0,SE Face | S Col-SE Ridge | South/Central Smts-S Ridge up; Yalung Ka,Climbing route 4,,before,Not a feature. Contains the same after-the-fact notes as ROUTE1.
+exped,NATION,str,0.0,0.0,USA | Japan | UK,Principle nationality,,before,
+exped,LEADERS,str,0.2,0.0,Paulo Grobel | Russell Brice | Dan Mazur,Leadership,,before,
+exped,SPONSOR,str,6.9,4.3,Independent climber | Himalayan Guides Ama Dablam Expedition 2 | Alpine Ascents International (AAI) Evere,Expedition sponsor / name,,before,
+exped,SUCCESS1,bool,0.0,0.0,True | False,Success on route 1 (Y/N),,after,
+exped,SUCCESS2,bool,0.0,0.0,False | True,Success on route 2 (Y/N),,after,
+exped,SUCCESS3,bool,0.0,0.0,False | True,Success on route 3 (Y/N),,after,
+exped,SUCCESS4,bool,0.0,0.0,False | True,Success on route 4 (Y/N),,after,
+exped,ASCENT1,str,76.3,80.1,1st | 2nd | 3rd,Ascent numbers for route 1,,after,
+exped,ASCENT2,str,99.1,99.5,5th | 4th | 3rd,Ascent numbers for route 2,,after,
+exped,ASCENT3,str,99.9,100.0,7th | 16th | 6th,Ascent numbers for route 3,,after,
+exped,ASCENT4,str,100.0,100.0,8th | 78th | 32nd,Ascent numbers for route 4,,after,
+exped,CLAIMED,bool,0.0,0.0,False | True,Success claimed (Y/N),,after,
+exped,DISPUTED,bool,0.0,0.0,False | True,Success disputed (Y/N),,after,
+exped,COUNTRIES,str,62.8,61.0,USA | UK | Switzerland,Other countries,,before,
+exped,APPROACH,str,53.5,52.2,Zhangmu->Nyalam->Tingri | KTM->Tingri->BC | Pangboche,Approach march,,before,
+exped,BCDATE,datetime64[ms],16.4,16.1,1921-06-26 ... 2026-02-08,Date arrived at base camp,,after,Known only after reaching base camp; empty if base camp was not reached.
+exped,SMTDATE,datetime64[ms],6.8,5.6,1905-09-01 ... 2026-02-09,Date reached summit,,after,
+exped,SMTTIME,str,56.5,53.4,1100 | 1000 | 1200,Time reached summit,,after,
+exped,SMTDAYS,Int64,0.0,0.0,0 ... 388,Nbr of days to summit / high-point (calculated),,after,
+exped,TOTDAYS,Int64,0.0,0.0,0 ... 280,Total number of days (calculated),,after,
+exped,TERMDATE,datetime64[ms],28.3,23.9,1921-09-30 ... 2025-11-03,Date terminated,,after,
+exped,TERMREASON,Int64,0.0,0.0,1 | 4 | 5,Reason terminated,"0=Unknown; 1=Success (main peak); 2=Success (subpeak, foresummit); 3=Success (claimed); 4=Bad weather (storms, high winds); 5=Bad conditions (deep snow, avalanching, falling ice, or rock); 6=Accident (death or serious injury); 7=Illness, AMS, exhaustion, or frostbite; 8=Lack (or loss) of supplies, support or equipment; 9=Lack of time; 10=Route technically too difficult, lack of experience, strength, or motivation; 11=Did not reach base camp; 12=Did not attempt climb; 13=Attempt rumored; 14=Other",after,
+exped,TERMNOTE,str,60.3,62.1,Abandoned at 5350m due to Sherpa strike | Abandoned due to earthquake | Termination reason unknown,Termination details,,after,
+exped,HIGHPOINT,Int64,0.0,0.0,0 ... 8850,Expedition high-point (m),,after,
+exped,TRAVERSE,bool,0.0,0.0,False | True,Traverse (Y/N),,after,
+exped,SKI,bool,0.0,0.0,False | True,Ski / snowboard descent (Y/N),,after,
+exped,PARAPENTE,bool,0.0,0.0,False | True,Parapente descent (Y/N),,after,
+exped,CAMPS,Int64,0.0,0.0,0 ... 34,Nbr of high camps above BC,,after,
+exped,ROPE,Int64,0.0,0.0,0 ... 8700,Amt of fixed rope (meters),,after,
+exped,TOTMEMBERS,Int64,0.0,0.0,0 ... 99,Nbr of members,,before,"Feature. 0 in one 2025 expedition that has member records; kept, HIRED_PER_MEMBER is NaN there."
+exped,SMTMEMBERS,Int64,0.0,0.0,0 ... 39,Nbr of members on summit,,after,
+exped,MDEATHS,Int64,0.0,0.0,0 ... 10,Nbr of member deaths,,after,
+exped,TOTHIRED,Int64,0.0,0.0,0 ... 99,Nbr of hired personnel (above BC),,before,Feature; also used for Sherpa risk.
+exped,SMTHIRED,Int64,0.0,0.0,0 ... 48,Nbr of hired personnel on summit,,after,Used for Sherpa risk (not a feature).
+exped,HDEATHS,Int64,0.0,0.0,0 ... 11,Nbr of hired personnel deaths,,after,Used for Sherpa risk (not a feature).
+exped,NOHIRED,bool,0.0,0.0,False | True,No hired personnel used (above BC),,before,
+exped,O2USED,bool,0.0,0.0,False | True,Oxygen used (Y/N),,after,
+exped,O2NONE,bool,0.0,0.0,True | False,Oxygen not used (Y/N),,after,
+exped,O2CLIMB,bool,0.0,0.0,False | True,Oxygen climbing (Y/N),,after,"Actual use, not a plan: excluded from prediction. Treatment in the causal analysis."
+exped,O2DESCENT,bool,0.0,0.0,False | True,Oxygen descending (Y/N),,after,
+exped,O2SLEEP,bool,0.0,0.0,False | True,Oxygen sleeping (Y/N),,after,
+exped,O2MEDICAL,bool,0.0,0.0,False | True,Oxygen used medically (Y/N),,after,
+exped,O2TAKEN,bool,0.0,0.0,False | True,"Oxygen taken, not used (Y/N)",,after,
+exped,O2UNKWN,bool,0.0,0.0,False | True,Oxygen use unknown (Y/N),,after,
+exped,OTHERSMTS,str,81.3,83.8,Climbed Island Peak | Climbed Lobuche East | Climbed Mera Peak,Other summits,,after,
+exped,CAMPSITES,str,3.5,2.9,"No Smt | BC(5350m),xxx | BC(5350m)",Campsite details,,after,
+exped,ROUTEMEMO,str,14.1,12.8,C1 at top of Icefall C2 in Western Cwm C | C1 at top of Icefall C2 at West Cwm C3 a | This mountain previously known as Ganesh,Route details,,after,
+exped,ACCIDENTS,str,70.9,74.4,None | Nothing serious | Nothing,Accidents,,after,
+exped,ACHIEVMENT,str,91.8,92.5,1st ascent | 1st Korean ascent | 1st solo ascent,Achievements,,after,
+exped,AGENCY,str,13.6,1.9,Asian Trekking | Thamserku Trekking | Seven Summit Treks,Trekking agency,,before,
+exped,COMRTE,boolean,20.1,9.6,True | False,Commercial route (Y/N),,before,"Feature. NA means 'unknown', not False."
+exped,STDRTE,boolean,18.7,8.0,True | False,8000m standard route (Y/N),,before,"Feature. NA means 'unknown', not False."
+exped,PRIMRTE,bool,0.0,0.0,False | True,Route info with primary exp (Y/N),,technical,
+exped,PRIMMEM,bool,0.0,0.0,False | True,Mbr info with primary exp (Y/N),,technical,
+exped,PRIMREF,boolean,31.4,24.0,False | True,Literature info with primary exp (Y/N),,technical,
+exped,PRIMID,str,93.6,95.6,RAMD55101 | PYRM49101 | EVER53101,Primary expedition ID (if any),,technical,
+exped,CHKSUM,Int64,0.0,0.0,2015 ... 23345122,Internal consistency check,,technical,
+members,EXPID,str,0.0,0.0,EVER88101 | HIML13308 | EVER15106,Expedition ID,,technical,"Identifier, not a feature. Not unique on its own: the key is (EXPID, YEAR). Groups for GroupKFold."
+members,MEMBID,str,0.0,0.0,01 | 02 | 03,Expedition member ID,,technical,"Identifier, not a feature. Members key: (EXPID, MYEAR, MEMBID)."
+members,PEAKID,str,0.0,0.0,EVER | AMAD | CHOY,Peak ID,,before,Feature; peaks with < 100 records -> OTHER.
+members,MYEAR,Int64,0.0,0.0,1905 ... 2025,Year,,before,"Matches exped.YEAR when joined on (EXPID, MYEAR)."
+members,MSEASON,Int64,0.0,0.0,1 ... 4,Season,,before,
+members,FNAME,str,0.1,0.1,Peter | Pasang | David,First (given) name,,before,
+members,LNAME,str,1.2,0.8,Sherpa | Tamang | Bhote,Last (family) name,,before,
+members,SEX,str,0.0,0.0,M | F | X,Sex,,before,Feature. Values other than M/F (one 'X') -> NaN in dataset_v1.
+members,AGE,Int64,100.0,100.0,,Age,,before,Empty in the public version (all 0 -> NaN). Age comes from CALCAGE.
+members,BIRTHDATE,datetime64[ms],100.0,100.0,,Birth date,,before,Empty in the public version.
+members,YOB,Int64,5.7,1.8,1849 ... 2073,Year of birth,,before,Used for the person ID (FNAME + LNAME + YOB). Text in DBF; empty -> NaN.
+members,CALCAGE,Int64,3.6,1.3,7 ... 86,Calculated age (calculated),,before,Age; 0 -> NaN.
+members,CITIZEN,str,0.0,0.0,Nepal | USA | Japan,Citizenship,,before,
+members,STATUS,str,0.0,0.0,Climber | H-A Worker | Leader,Status,,before,
+members,RESIDENCE,str,11.6,12.2,"Tokyo, Japan | Phortse, Khumbu | Beding, Dolakha",Residence (city / country),,before,
+members,OCCUPATION,str,37.6,20.1,Alpine guide | Physician | Engineer,Occupation,,before,
+members,LEADER,bool,0.0,0.0,False | True,Leader (Y/N),,before,
+members,DEPUTY,bool,0.0,0.0,False | True,Deputy leader (Y/N),,before,
+members,BCONLY,bool,0.0,0.0,False | True,BC / Advanced BC only (Y/N),,after,"Recorded after the fact. Filter only, not a feature."
+members,NOTTOBC,bool,0.0,0.0,False | True,Not to base camp (Y/N),,after,"Recorded after the fact. Filter only, not a feature."
+members,SUPPORT,bool,0.0,0.0,False | True,High-altitude support member (Y/N),,before,
+members,DISABLED,bool,0.0,0.0,False | True,Disabled (Y/N),,before,
+members,HIRED,bool,0.0,0.0,False | True,Hired local staff (Y/N),,before,Filter: the main model uses HIRED == False only.
+members,SHERPA,bool,0.0,0.0,False | True,Sherpa (Y/N),,before,
+members,TIBETAN,bool,0.0,0.0,False | True,Tibetan (Y/N),,before,
+members,MSUCCESS,bool,0.0,0.0,False | True,Success (Y/N),,after,Target of the main task.
+members,MCLAIMED,bool,0.0,0.0,False | True,Success claimed (Y/N),,after,Filter: exclude disputed ascents and check their impact separately.
+members,MDISPUTED,bool,0.0,0.0,False | True,Success disputed (Y/N),,after,Filter: exclude disputed ascents and check their impact separately.
+members,MSOLO,bool,0.0,0.0,False | True,Solo (Y/N),,after,
+members,MTRAVERSE,bool,0.0,0.0,False | True,Traverse (Y/N),,after,
+members,MSKI,bool,0.0,0.0,False | True,Ski / snowboard descent (Y/N),,after,
+members,MPARAPENTE,bool,0.0,0.0,False | True,Parapente descent (Y/N),,after,
+members,MSPEED,boolean,46.3,42.2,False | True,Speed ascent (Y/N),,after,
+members,MHIGHPT,bool,0.0,0.0,True | False,Exped. high-point reached (Y/N),,after,
+members,MPERHIGHPT,Int64,0.0,0.0,0 ... 8850,Personal high-point,,after,
+members,MSMTDATE1,datetime64[ms],32.4,34.8,1905-09-01 ... 2026-10-26,1st summit / high-point date,,after,
+members,MSMTDATE2,datetime64[ms],99.5,99.8,1962-05-22 ... 2025-12-05,2nd summit date,,after,
+members,MSMTDATE3,datetime64[ms],100.0,100.0,1979-10-13 ... 2024-05-25,3rd summit date,,after,
+members,MSMTTIME1,str,69.5,72.2,1100 | 1000 | 0900,1st summit / high-point time,,after,
+members,MSMTTIME2,str,99.7,99.9,0600 | 1200 | 0900,2nd summit time,,after,
+members,MSMTTIME3,str,100.0,100.0,0800 | 0600 | 0900,3rd summit time,,after,
+members,MROUTE1,Int64,0.0,0.0,0 ... 4,1st ascent route,,after,
+members,MROUTE2,Int64,0.0,0.0,0 ... 4,2nd ascent route,,after,
+members,MROUTE3,Int64,0.0,0.0,0 ... 2,3rd ascent route,,after,
+members,MASCENT1,Int64,0.0,0.0,0 ... 812,1st ascent number,,after,
+members,MASCENT2,Int64,0.0,0.0,0 ... 444,2nd ascent number,,after,
+members,MASCENT3,Int64,0.0,0.0,0 ... 111,3rd ascent number,,after,
+members,MO2USED,bool,0.0,0.0,False | True,Oxygen used (Y/N),,after,
+members,MO2NONE,bool,0.0,0.0,True | False,Oxygen not used (Y/N),,after,
+members,MO2CLIMB,bool,0.0,0.0,False | True,Oxygen climbing (Y/N),,after,
+members,MO2DESCENT,bool,0.0,0.0,False | True,Oxygen descending (Y/N),,after,
+members,MO2SLEEP,bool,0.0,0.0,False | True,Oxygen sleeping (Y/N),,after,
+members,MO2MEDICAL,bool,0.0,0.0,False | True,Oxygen used medically (Y/N),,after,
+members,MO2NOTE,str,83.8,85.0,C3 to smt to C3 | C4 to smt to C4 | From C4 to smt to C4,Oxygen use reason,,after,
+members,DEATH,bool,0.0,0.0,False | True,Death (Y/N),,after,Target of the death risk analysis.
+members,DEATHDATE,datetime64[ms],98.8,99.1,1905-09-01 ... 2026-01-15,Date of death,,after,
+members,DEATHTIME,str,99.4,99.6,1600 | 1000 | 1200,Time of death,,after,
+members,DEATHTYPE,Int64,0.0,0.0,0 | 7 | 4,Death type (cause),0=Unspecified; 1=AMS (acute mtn sickness); 2=Exhaustion; 3=Exposure / frostbite; 4=Fall; 5=Crevasse; 6=Icefall collapse; 7=Avalanche; 8=Falling rock / ice; 9=Disappearance (unexplained); 10=Illness (non-AMS); 11=Other; 12=Unknown,after,
+members,DEATHHGTM,Int64,0.0,0.0,0 ... 8830,Death height (m),,after,
+members,DEATHCLASS,Int64,0.0,0.0,0 | 3 | 5,Death classification,0=Unspecified; 1=Death enroute BC; 2=Death at BC / ABC; 3=Route preparation; 4=Ascending in summit bid; 5=Descending from summit bid; 6=Expedition evacuation; 7=Other / Unknown,after,
+members,AMS,bool,0.0,0.0,False | True,AMS-related death (Y/N),,after,
+members,WEATHER,bool,0.0,0.0,False | True,Weather-related death (Y/N),,after,
+members,INJURY,bool,0.0,0.0,False | True,Injury (Y/N),,after,
+members,INJURYDATE,datetime64[ms],98.9,98.8,1939-05-20 ... 2025-10-27,Date of injury,,after,
+members,INJURYTIME,str,99.9,99.9,1000 | 0830 | 0600,Time of injury,,after,
+members,INJURYTYPE,Int64,0.0,0.0,0 | 3 | 1,Injury type (cause),0=Unspecified; 1=AMS (acute mtn sickness); 2=Exhaustion; 3=Exposure / frostbite; 4=Fall; 5=Crevasse; 6=Icefall collapse; 7=Avalanche; 8=Falling rock / ice; 9=Disappearance (unexplained); 10=Illness (non-AMS); 11=Other; 12=Unknown,after,
+members,INJURYHGTM,Int64,0.0,0.0,0 ... 8880,Injury height (m),,after,
+members,DEATHNOTE,str,97.9,98.0,Pulmonary edema | Cerebral edema | Frostbitten toes,Death & injury notes,,after,
+members,MEMBERMEMO,str,86.9,96.6,1st 8000er | 2nd ascent of Everest | 3rd ascent of Everest,Member notes,,after,
+members,NECROLOGY,str,94.6,96.5,(1945-2025) Died 3 Nov 2024 in Kathmandu | (1942-2014) Died 20 Sept 2014 from cance | (1960-2016) Died 10 July 2016 in Bernina,Necrology,,after,
+members,MSMTBID,Int64,0.0,0.0,5 | 1 | 0,Summit Bid,0=Unspecified; 1=No summit bid; 2=Aborted below high camp; 3=Aborted at high camp; 4=Aborted above high camp; 5=Successful summit bid,after,
+members,MSMTTERM,Int64,0.0,0.0,1 | 0 | 3,Summit bid termination reason,"0=Unspecified; 1=Success; 2=Success (subpeak, foresummit); 3=Bad weather (storms, high winds); 4=Bad conditions (deep snow, avalanches, falling rock/ice); 5=Accident (death or injury to self or others); 6=Altitude (AMS symptoms, breathing or unwell); 7=Exhaustion, fatigue, weakness or lack of motivation; 8=Frostbite, snowblindness or coldness; 9=Other illnesses or pains; 10=Lack of supplies, support or equipment problems; 11=O2 system failure; 12=Route difficulty, intimidation or insufficient ability; 13=Too late in day or too slow; 14=Assisting, guiding, supporting or accompanying others; 15=Route/camp preparation or rope fixing; 16=Insufficient time left for expedition; 17=Did not climb or intent to summit; 18=Other; 19=Unknown; 20=Did Not Attempt Additional Peak After 1st Success",after,Filter: drop 17 (Did not climb or intent to summit).
+members,HCN,Int64,0.0,0.0,0 ... 256,Himalayan Club number,,technical,
+members,MCHKSUM,Int64,0.0,0.0,-2173 ... 2476288,Internal consistency check,,technical,
+members,MSMTNOTE1,Int64,76.4,75.1,0 | 2 | 1,1st summit notation,0=None; 1=Flight-assisted ascent above BC; 2=Flight-assisted descent above BC; 4=Re-ascent from high camp,after,
+members,MSMTNOTE2,Int64,76.7,75.5,0 ... 4,2nd summit notation,,after,
+members,MSMTNOTE3,Int64,76.8,75.5,0 ... 4,3rd summit notation,,after,
+members,DEATHRTE,Int64,75.8,74.9,0 ... 2,Death route,,after,
+peaks,PEAKID,str,0.0,0.0,AMAD | AMPG | ANN1,Peak ID,,before,Feature; peaks with < 100 records -> OTHER.
+peaks,PKNAME,str,0.0,0.0,Ama Dablam | Amphu Gyabjen | Annapurna I,Peak name,,before,
+peaks,PKNAME2,str,48.5,46.2,Twins | Junction Peak | Tent Peak,Peak name 2,,before,
+peaks,LOCATION,str,0.2,0.3,Ohmi Kangri Himal (WNW of Kangchenjunga) | Nalakankar Himal (on W Nepal/Tibetan bor | Annapurna Himal,Location,,before,
+peaks,HEIGHTM,Int64,0.0,0.0,5407 ... 8849,Height (m),,before,
+peaks,HEIGHTF,Int64,0.0,0.0,17740 ... 29032,Height (ft),,before,
+peaks,HIMAL,Int64,0.0,0.0,12 | 19 | 9,Himal,0=Unclassified; 1=Annapurna; 2=Api/Byas Risi/Guras; 3=Damodar; 4=Dhaulagiri; 5=Ganesh/Shringi; 6=Janak/Ohmi Kangri; 7=Jongsang; 8=Jugal; 9=Kangchenjunga/Simhalila; 10=Kanjiroba; 11=Kanti/Palchung; 12=Khumbu; 13=Langtang; 14=Makalu; 15=Manaslu/Mansiri; 16=Mukut/Mustang; 17=Nalakankar/Chandi/Changla; 18=Peri; 19=Rolwaling; 20=Saipal,before,
+peaks,REGION,Int64,0.0,0.0,2 | 7 | 5,Region,0=Unclassified; 1=Kangchenjunga-Janak; 2=Khumbu-Rolwaling-Makalu; 3=Langtang-Jugal; 4=Manaslu-Ganesh; 5=Annapurna-Damodar-Peri; 6=Dhaulagiri-Mukut; 7=Kanjiroba-Far West,before,
+peaks,OPEN,bool,0.0,0.0,True | False,Peak open (Y/N),,after,"Current state of the peak, not as of the expedition year."
+peaks,UNLISTED,bool,0.0,0.0,False | True,Peak unlisted (Y/N),,after,"Current state of the peak, not as of the expedition year."
+peaks,TREKKING,bool,0.0,0.0,False | True,Trekking peak (Y/N),,after,"Current state of the peak, not as of the expedition year. The year it became a trekking peak is in TREKYEAR."
+peaks,TREKYEAR,Int64,93.8,95.3,20 ... 2002,Trekking peak year,,after,"Current state of the peak, not as of the expedition year."
+peaks,RESTRICT,str,40.0,37.7,Opened in 2014 | Opened in 2002 | Opened in 2003,Peak restrictions,,after,"Current state of the peak, not as of the expedition year."
+peaks,PHOST,Int64,0.0,0.0,1 | 4 | 5,Peak host countries,"0=Unclassified; 1=Nepal only; 2=China only; 3=India only; 4=Nepal & China; 5=Nepal & India; 6=Nepal, China & India",before,
+peaks,PSTATUS,Int64,0.0,0.0,2 | 1,Peak climbing status,0=Unknown; 1=Unclimbed; 2=Climbed,after,"Current state of the peak, not as of the expedition year. Unclimbed means there was no success."
+peaks,PEAKMEMO,str,1.6,1.8,"Ministry designation of Sharphu peaks as | Other map altitudes: 7555m - HMG-MT, HMG | Other map altitudes: 6423m - HMG-MT, HMG",Peak notes,,after,"Current state of the database, contains later information."
+peaks,PYEAR,Int64,24.5,14.0,1909 ... 2035,First ascent year,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,PSEASON,Int64,0.0,0.0,0 ... 4,First ascent season,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,PEXPID,str,24.9,14.2,AMAD61101 | AMPG53101 | ANN150101,First ascent expedition ID,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,PSMTDATE,str,25.4,14.2,Nov 02 | Oct 15 | Oct 25,First ascent date,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,PCOUNTRY,str,24.7,14.2,"Japan, Nepal | Japan | UK",First ascent country,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,PSUMMITERS,str,2.2,1.1,"Unclimbed | Unclimbed? | Peter Boultbee, Dennis Davis",First ascent summiters,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,PSMTNOTE,str,84.7,84.4,Illegal ascent | Climbed illegally by Sean Burch in Octob | Note: This mountain previously known as ,First ascent comments,,after,"First ascent data: for 378 expeditions this is the expedition itself (PEXPID). Safe derived feature: 'peak already climbed' = (PYEAR, PSEASON) earlier than (YEAR, SEASON)."
+peaks,REFERMEMO,str,96.2,95.5,Dyhrenfurth history 1950-1977 (MM 58:44- | Dyhrenfurth history 1960-1976 (MM 51:36- | History 1982-1998 (High 198:42 May 1999),Peak chronology references,,after,"Current state of the database, contains later information."
+peaks,PHOTOMEMO,str,84.5,80.5,"W Face (High 175:92 Jun 1997) | S Side (AAJ 74:360 2000) (Himlung, Gyaji | W Face (High 126:5 May 1993) SE Face (Hi",Peak photo references,,after,"Current state of the database, contains later information."

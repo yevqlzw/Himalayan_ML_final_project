@@ -1,0 +1,444 @@
+Himalayan Database Guide (Jun 2026), Appendix B: Database Structure — pages 60-66, extracted as text.
+
+
+===== page 60 =====
+Appendix B: Database Structure
+
+Peaks Table (PEAKS)
+
+There is one record for each peak in the PEAKS table. The 4-character PEAKID
+field is the key field (unique identifier) for each record. The record format is:
+
+     Field                                Field                 Data
+     Description                          Name               Type Length
+
+     Peak ID                              PEAKID               C    04
+     Peak name                            PKNAME               C    70
+     Peak name 2                          PKNAME2              C    70
+     Location                             LOCATION             C    70
+     Height (m)                           HEIGHTM              N    04
+     Height (ft)                          HEIGHTF              N    05
+     Himal                                HIMAL                N    02
+         0 – Unclassified
+         1 – Annapurna                 11 – Kanti/Palchung
+         2 – Api/Byas Risi/Guras       12 – Khumbu
+         3 – Damodar                   13 – Langtang
+         4 – Dhaulagiri                14 – Makalu
+         5 – Ganesh/Shringi            15 – Manaslu/Mansiri
+         6 – Janak/Ohmi Kangri         16 – Mukut/Mustang
+         7 – Jongsang                  17 – Nalakankar/Chandi/Changla
+         8 – Jugal                     18 – Peri
+         9 – Kangchenjunga/Simhalila   19 – Rolwaling
+         10 – Kanjiroba                20 – Saipal
+     Region                                REGION              N    01
+         0 – Unclassified
+         1 – Kangchenjunga-Janak       5 – Annapurna-Damodar-Peri
+         2 – Khumbu-Rolwaling-Makalu   6 – Dhaulagiri-Mukut
+         3 – Langtang-Jugal            7 – Kanjiroba-Far West
+         4 – Manaslu-Ganesh
+     Peak open (Y/N)                      OPEN                 L    01
+     Peak unlisted (Y/N)                  UNLISTED             L    01
+     Trekking peak (Y/N)                  TREKKING             L    01
+     Trekking peak year                   TREKYEAR             C    04
+     Peak restrictions                    RESTRICT             C    70
+     Peak host countries                  PHOST                N    01
+         0 – Unclassified
+         1 – Nepal only                4 – Nepal & China
+         2 – China only                5 – Nepal & India
+         3 – India only                6 – Nepal, China & India
+     Peak climbing status                  PSTATUS              N   01
+         0 – Unknown
+         1 – Unclimbed
+         2 – Climbed
+     Peak notes                           PEAKMEMO             M     10
+     First ascent year                    PYEAR                C     04
+     First ascent season                  PSEASON              N     01
+     First ascent expedition ID           PEXPID               C     09
+     First ascent date                    PSMTDATE             C     06
+     First ascent country                 PCOUNTRY             C     70
+     First ascent summiters               PSUMMITERS           C    210
+     First ascent comments                PSMTNOTE             C    140
+     Peak chronology references           REFERMEMO            M     10
+     Peak photo references                PHOTOMEMO            M     10
+
+                                          Total length              775
+
+60
+
+===== page 61 =====
+Expeditions Table (EXPED)
+
+There is one record for each expedition in the EXPED table. The 9-character
+EXPID field is the key field for each record. The record format is:
+
+   Field                                     Field                   Data
+   Description                               Name                 Type Length
+
+   Expedition ID                               EXPID                  C     09
+   Peak ID                                     PEAKID                 C     04
+   Year                                        YEAR                   C     04
+   Season                                      SEASON                 N     01
+       0 – Unknown
+       1 – Spring               3 – Autumn
+       2 – Summer               4 – Winter
+   Host country                                HOST                   N     01
+       0 – Unknown
+       1 – Nepal
+       2 – China
+       3 – India
+   Climbing route 1                            ROUTE1                 C     55
+   Climbing route 2                            ROUTE2                 C     55
+   Climbing route 3                            ROUTE3                 C     55
+   Climbing route 4                            ROUTE4                 C     55
+   Principle nationality                       NATION                 C     20
+   Leadership                                  LEADERS                C     70
+   Expedition sponsor / name                   SPONSOR                C     70
+   Success on route 1 (Y/N)                    SUCCESS1               L     01
+   Success on route 2 (Y/N)                    SUCCESS2               L     01
+   Success on route 3 (Y/N)                    SUCCESS3               L     01
+   Success on route 4 (Y/N)                    SUCCESS4               L     01
+   Ascent numbers for route 1                  ASCENT1                C     25
+   Ascent numbers for route 2                  ASCENT2                C     25
+   Ascent numbers for route 3                  ASCENT3                C     25
+   Ascent numbers for route 4                  ASCENT4                C     25
+   Success claimed (Y/N)                       CLAIMED                L     01
+   Success disputed (Y/N)                      DISPUTED               L     01
+   Other countries                             COUNTRIES              C 160
+   Approach march                              APPROACH               C     80
+   Date arrived at base camp                   BCDATE                 D     08
+   Date reached summit                         SMTDATE                D     08
+   Time reached summit                         SMTTIME                C     04
+   Nbr of days to summit / high-point          SMTDAYS                N     03    (calculated)
+   Total number of days                        TOTDAYS                N     03    (calculated)
+   Date terminated                             TERMDATE               D     08
+   Reason terminated                           TERMREASON             N     02
+       0 – Unknown
+       1 – Success (main peak)
+       2 – Success (subpeak, foresummit)
+       3 – Success (claimed)
+       4 – Bad weather (storms, high winds)
+       5 – Bad conditions (deep snow, avalanching, falling ice, or rock)
+       6 – Accident (death or serious injury)
+       7 – Illness, AMS, exhaustion, or frostbite
+       8 – Lack (or loss) of supplies, support or equipment
+       9 – Lack of time
+       10 – Route technically too difficult, lack of experience, strength, or motivation
+       11 – Did not reach base camp
+       12 – Did not attempt climb
+       13 – Attempt rumored
+       14 – Other
+   Termination details                         TERMNOTE               C 140
+                                                                                                 61
+
+===== page 62 =====
+     Description                              Name           Type Length
+
+     Expedition high-point (m)                HIGHPOINT       N    04
+     Traverse (Y/N)                           TRAVERSE        L    01
+     Ski / snowboard descent (Y/N)            SKI             L    01
+     Parapente descent (Y/N)                  PARAPENTE       L    01
+     Nbr of high camps above BC               CAMPS           N    02
+     Amt of fixed rope (meters)               ROPE            N    04
+     Nbr of members                           TOTMEMBERS      N    02
+     Nbr of members on summit                 SMTMEMBERS      N    02
+     Nbr of member deaths                     MDEATHS         N    02
+     Nbr of hired personnel (above BC)        TOTHIRED        N    02
+     Nbr of hired personnel on summit         SMTHIRED        N    02
+     Nbr of hired personnel deaths            HDEATHS         N    02
+     No hired personnel used (above BC)       NOHIRED         L    01
+     Oxygen used (Y/N)                        O2USED          L    01
+     Oxygen not used (Y/N)                    O2NONE          L    01
+     Oxygen climbing (Y/N)                    O2CLIMB         L    01
+     Oxygen descending (Y/N)                  O2DESCENT       L    01
+     Oxygen sleeping (Y/N)                    O2SLEEP         L    01
+     Oxygen used medically (Y/N)              O2MEDICAL       L    01
+     Oxygen taken, not used (Y/N)             O2TAKEN         L    01
+     Oxygen use unknown (Y/N)                 O2UNKWN         L    01
+     Other summits                            OTHERSMTS       C   252
+     Campsite details                         CAMPSITES       C   252
+     Route details                            ROUTEMEMO       M    10
+     Accidents                                ACCIDENTS       C   252
+     Achievements                             ACHIEVMENT      C   252
+     Trekking agency                          AGENCY          C    50
+     Commercial route (Y/N)                   COMRTE          L    01
+     8000m standard route (Y/N)               STDRTE          L    01
+     Route info with primary exp (Y/N)        PRIMRTE         L    01
+     Mbr info with primary exp (Y/N)          PRIMMEM         L    01
+     Literature info with primary exp (Y/N)   PRIMREF         L    01
+     Primary expedition ID (if any)           PRIMID          C    09
+     Internal consistency check               CHKSUM          N    08
+
+                                              Total length        2045
+
+Members Table (MEMBERS)
+
+There is one record for each member of any expedition in the MEMBERS table.
+The 9-character EXPID plus the 2-character MEMBID field is the key field for
+each record. Records are created for each member on the climbing permit, for
+each hired member (often a Sherpa) who summited or died on the expedition,
+and for other noted hired participants (sirdars or those involved in special
+situations). The record format is:
+
+     Field                                    Field             Data
+     Description                              Name           Type Length
+
+     Expedition ID                            EXPID           C    09
+     Expedition member ID                     MEMBID          C    02
+     Peak ID                                  PEAKID          C    04
+     Year                                     MYEAR           C    04
+     Season                                   MSEASON         N    01
+     First (given) name                       FNAME           C    35
+     Last (family) name                       LNAME           C    35
+     Sex                                      SEX             C    01
+     Age                                      AGE             N    02
+62
+
+===== page 63 =====
+Birth date                             BIRTHDATE             D   08
+Year of birth                          YOB                   C   04
+Calculated age                         CALCAGE               N   02   (calculated)
+Citizenship                            CITIZEN               C   25
+Status                                 STATUS                C   25
+Residence (city / country)             RESIDENCE             C   70
+Occupation                             OCCUPATION            C   70
+Leader (Y/N)                           LEADER                L   01
+Deputy leader (Y/N)                    DEPUTY                L   01
+BC / Advanced BC only (Y/N)            BCONLY                L   01
+Not to base camp (Y/N)                 NOTTOBC               L   01
+High-altitude support member (Y/N)     SUPPORT               L   01
+Disabled (Y/N)                         DISABLED              L   01
+Hired local staff (Y/N)                HIRED                 L   01
+Sherpa (Y/N)                           SHERPA                L   01
+Tibetan (Y/N)                          TIBETAN               L   01
+Success (Y/N)                          MSUCCESS              L   01
+Success claimed (Y/N)                  MCLAIMED              L   01
+Success disputed (Y/N)                 MDISPUTED             L   01
+Solo (Y/N)                             MSOLO                 L   01
+Traverse (Y/N)                         MTRAVERSE             L   01
+Ski / snowboard descent (Y/N)          MSKI                  L   01
+Parapente descent (Y/N)                MPARAPENTE            L   01
+Speed ascent (Y/N)                     MSPEED                L   01
+Exped. high-point reached (Y/N)        MHIGHPT               L   01
+Personal high-point                    MPERHIGHPT            N   04
+1st summit / high-point date           MSMTDATE1             D   08
+2nd summit date                        MSMTDATE2             D   08
+3rd summit date                        MSMTDATE3             D   08
+1st summit / high-point time           MSMTTIME1             C   04
+2nd summit time                        MSMTTIME2             C   04
+3rd summit time                        MSMTTIME3             C   04
+1st ascent route                       MROUTE1               N   01
+2nd ascent route                       MROUTE2               N   01
+3rd ascent route                       MROUTE3               N   01
+1st ascent number                      MASCENT1              N   03
+2nd ascent number                      MASCENT2              N   03
+3rd ascent number                      MASCENT3              N   03
+Oxygen used (Y/N)                      MO2USED               L   01
+Oxygen not used (Y/N)                  MO2NONE               L   01
+Oxygen climbing (Y/N)                  MO2CLIMB              L   01
+Oxygen descending (Y/N)                MO2DESCENT            L   01
+Oxygen sleeping (Y/N)                  MO2SLEEP              L   01
+Oxygen used medically (Y/N)            MO2MEDICAL            L   01
+Oxygen use reason                      MO2NOTE               C   60
+Death (Y/N)                            DEATH                 L   01
+Date of death                          DEATHDATE             D   08
+Time of death                          DEATHTIME             C   04
+Death type (cause)                     DEATHTYPE             N   02
+     0 – Unspecified
+     1 – AMS (acute mtn sickness) 7 – Avalanche
+     2 – Exhaustion                8 – Falling rock / ice
+     3 – Exposure / frostbite      9 – Disappearance (unexplained)
+     4 – Fall                      10 – Illness (non-AMS)
+     5 – Crevasse                  11 – Other
+     6 – Icefall collapse          12 – Unknown
+Death height (m)                       DEATHHGTM             N   04
+Death classification                   DEATHCLASS            N   01
+     0 – Unspecified
+     1 – Death enroute BC          5 – Descending from summit bid
+     2 – Death at BC / ABC         6 – Expedition evacuation
+     3 – Route preparation         7 – Other / Unknown
+     4 – Ascending in summit bid
+                                                                                     63
+
+===== page 64 =====
+     Description                              Name                 Type Length
+
+     AMS-related death (Y/N)                      AMS                 L     01
+     Weather-related death (Y/N)                  WEATHER             L     01
+     Injury (Y/N)                                 INJURY              L     01
+     Date of injury                               INJURYDATE          D     08
+     Time of injury                               INJURYTIME          C     04
+     Injury type (cause)                          INJURYTYPE          N     02
+          0 – Unspecified
+          1 – AMS (acute mtn sickness) 7 – Avalanche
+          2 – Exhaustion                      8 – Falling rock / ice
+          3 – Exposure / frostbite            9 – Disappearance (unexplained)
+          4 – Fall                            10 – Illness (non-AMS)
+          5 – Crevasse                        11 – Other
+          6 – Icefall collapse                12 – Unknown
+     Injury height (m)                            INJURYHGTM          N     04
+     Death & injury notes                         DEATHNOTE           C 252
+     Member notes                                 MEMBERMEMO          M     10
+     Necrology                                    NECROLOGY           M     10
+     Summit Bid                                   MSMTBID             N     01
+          0 – Unspecified
+          1 – No summit bid
+          2 – Aborted below high camp
+          3 – Aborted at high camp
+          4 – Aborted above high camp
+          5 – Successful summit bid
+     Summit bid termination reason                MSMTTERM            N     02
+          0 – Unspecified
+          1 – Success
+          2 – Success (subpeak, foresummit)
+          3 – Bad weather (storms, high winds)
+          4 – Bad conditions (deep snow, avalanches, falling rock/ice)
+          5 – Accident (death or injury to self or others)
+          6 – Altitude (AMS symptoms, breathing or unwell)
+          7 – Exhaustion, fatigue, weakness or lack of motivation
+          8 – Frostbite, snowblindness or coldness
+          9 – Other illnesses or pains
+          10 – Lack of supplies, support or equipment problems
+          11 – O2 system failure
+          12 – Route difficulty, intimidation or insufficient ability
+          13 – Too late in day or too slow
+          14 – Assisting, guiding, supporting or accompanying others
+          15 – Route/camp preparation or rope fixing
+          16 – Insufficient time left for expedition
+          17 – Did not climb or intent to summit
+          18 – Other
+          19 – Unknown
+          20 – Did Not Attempt Additional Peak After 1st Success
+     Himalayan Club number                        HCN                 N     03
+     Internal consistency check                   MCHKSUM             N     08
+     1st summit notation                          MSMTNOTE1           N     02
+          0 – None
+          1 – Flight-assisted ascent above BC
+          2 – Flight-assisted descent above BC
+          4 – Re-ascent from high camp
+     2nd summit notation                          MSMTNOTE2           N     02
+     3rd summit notation                          MSMTNOTE3           N     02
+     Death route                                  DEATHRTE            N     01
+
+                                              Total length                767
+
+The AGE and BIRTHDATE are blank in the public version of this table.
+
+64
+
+===== page 65 =====
+Literature References Table (REFER)
+
+There is one record for each reference in the REFER table. The record format is:
+
+   Field                              Field                Data
+   Description                        Name              Type Length
+
+   Expedition ID                           EXPID           C   09
+   Peak ID                                 PEAKID          C   04
+   Expedition Reference ID                 REFID           C   02
+   Year                                    RYEAR           C   04
+   Reference type                          RTYPE           N   02
+        1 – Book
+        2 – Journal
+        3 – Magazine
+        4 – Report / Brochure
+        5 – Website
+        6 – Himalayan Database Report
+        7 – Hawley Archives
+        8 – Other
+   Journal / magazine type                 RJRNL           C   04
+        AAJ     – American Alpine Journal
+        AAN     – Asian Alpine E-News
+        AJ      – Alpine Journal (UK)
+        ALP     – Alpinist Magazine (USA)
+        CAJ     – Canadian Alpine Journal
+        CLIM – Climb Magazine (UK)
+        CLMB – Climbing Magazine (USA)
+        DAV     – Deutsche Alpenvereins Jahrbuch
+        HCN – Himalayan Club E-Newsletter
+        HIGH – High Mountain Magazine (UK)
+        HJ      – Himalayan Journal
+        HMJ     – Himalayan Mountaineering Journal
+        IM      – Indian Mountaineer
+        IWA     – Iwa To Yuki (Rock and Snow)
+        JAC     – Japanese Alpine Club (Sangaku)
+        JAN     – Japanese Alpine News
+        KAF     – Korean Alpine Federation Journal
+        KAN     – Korean Alpine News
+        MENS – Men’s Journal (USA)
+        MM      – Mountain Magazine (UK)
+        MW      – Mountain World (Berge der Welt)
+        NGA – National Geographic Adventure Magazine (USA)
+        NGS – National Geographic Magazine (USA)
+        NZAJ – New Zealand Alpine Journal
+        OTH – Other Magazine or Journal
+        OUTS – Outside Magazine (USA)
+        ROCK – Rock & Ice Magazine (USA)
+        SMT – Summit Magazine (USA)
+        VERT – Vertical Magazine (UK)
+   Author (s)                              RAUTHOR         C   140
+   Title/URL                               RTITLE          C   252
+   Book publisher                          RPUBLISHER      C    70
+   Book publication date                   RPUBDATE        C    04
+   Language                                RLANGUAGE       C    30
+   Journal / magazine citation             RCITATION       C    30
+   Yakushi 1994 number                     RYAK94          C    05
+   Reference notes                         RNOTES          M    10
+
+                                      Total length             566
+
+
+                                                                              65
+
+===== page 66 =====
+The field data types are:
+
+     C – character
+     N – numeric
+     D – date
+     L – logical (true or false / yes or no)
+     M – memo
+
+Dates are expressed in either “dd/mm/yyyy” or “mm/dd/yyyy” format, depending
+on the setting of the Set Date Format command in the Setup submenu of the
+File menu (see Appendix D).
+
+Member Names
+
+Member names from countries that use the Cyrillic alphabet (Russia, Bulgaria,
+etc.) and from countries that use Chinese, Korean, or Japanese alphabets often
+have variations in their Roman-alphabet spellings due to differences in the
+transliteration schemes used.
+
+When searching for these names, you may have to try different alternatives or
+give only short substrings in the search fields.
+
+Normally for Chinese and Korean names, the family name precedes the given
+name, and for Japanese names, the given name precedes the family name. But
+some Chinese with Christian first names give their name using the given name
+first in the Western style (often these are Chinese from Hong Kong, Malaysia, or
+Singapore).
+
+Since Tibetans normally do not have a family name, their complete name is
+specified in the given name field in the MEMBERS table and the family name is
+blank. However, some Tibetans, mainly from India, use Bhotia (or a variant) as
+their family name.
+
+Nepalis who come from the hill communities also do not have family names. In
+these cases, their tribal name is used in the family name field (Sherpa, Tamang,
+Gurung, Rai, etc.).
+
+Some Indonesians are known only by one name, which is given in the family
+name field.
+
+Spanish family names usually consist of two parts, the second part being a
+maternal name. Both parts are given if known, even though the climber may use
+only the first part.
+
+Spanish Basque names also may have transliteration variations.
+
+Nationalities and Citizenships
+
+The NATION and COUNTRIES fields in the EXPED table and the CITIZEN
+field in the MEMBERS table use the name of the country at the time of the
+66
