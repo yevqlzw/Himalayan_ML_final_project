@@ -1,0 +1,5 @@
+level,auc,groups,rows,error_icc
+all rows (pooled),0.692,1,9114,
+inside one peak,0.638,16,9084,0.016
+inside one peak x year x season,0.645,80,8836,0.119
+inside one expedition,0.644,588,7017,0.257
