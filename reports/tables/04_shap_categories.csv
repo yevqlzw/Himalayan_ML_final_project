@@ -1,0 +1,7 @@
+factor,category,n,shap_mean,points
+season,Spring,2372,0.0115,0.2663
+season,Autumn,2592,-0.0156,-0.3608
+season,Winter,78,-0.0303,-0.7004
+sex,M,4033,0.0026,0.0598
+sex,F,1008,-0.0167,-0.387
+sex,NA,1,-0.0197,-0.4556
