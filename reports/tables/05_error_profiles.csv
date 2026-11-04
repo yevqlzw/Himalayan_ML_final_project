@@ -1,0 +1,12 @@
+,too optimistic,all who failed,too pessimistic,all who succeeded
+rows,228,2336,103,2706
+expeditions,121,629,49,663
+median age,37.0,44.0,47.0,40.0
+median earlier summits,1.0,0.0,0.0,0.0
+median hired per member,1.0454545454545454,0.6,0.5,0.875
+commercial route,0.8771929824561403,0.5774828767123288,0.2815533980582524,0.7594235033259423
+anomalous season,0.3508771929824561,0.1819349315068493,0.1553398058252427,0.14079822616407983
+team had no summit,0.2631578947368421,0.4747431506849315,0.0,0.0
+median team success,0.43902439024390244,0.13333333333333333,0.7222222222222222,0.8333333333333334
+median share of height reached,0.8984065996157758,0.8877188686176074,1.0,1.0
+top peaks,"Everest 72%, Lhotse 11%, Ama Dablam 8%","Everest 21%, Ama Dablam 21%, Manaslu 14%","Other peaks 26%, Manaslu 17%, Himlung Himal 14%","Everest 37%, Ama Dablam 21%, Manaslu 13%"

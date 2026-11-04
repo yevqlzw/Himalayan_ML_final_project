@@ -1,0 +1,4 @@
+,trees,time_folds_auc,time_folds_log_loss,val_auc,val_log_loss
+final model,178.0,0.6916,0.6304,0.7119,0.6216
+with YEAR,174.0,0.6917,0.6306,0.7109,0.6207
+fitted with anomalous seasons,139.0,0.6798,0.6355,0.719,0.6252
