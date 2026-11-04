@@ -1,0 +1,5 @@
+split,agency,rows,expeditions,actual,predicted,roc_auc
+validation,seen up to 2017,3807,631,0.529,0.496,"0.710 [0.676, 0.744]"
+validation,new,1235,291,0.561,0.498,"0.716 [0.673, 0.758]"
+test,seen up to 2017,5992,647,0.514,0.511,"0.689 [0.666, 0.711]"
+test,new,3122,380,0.552,0.522,"0.697 [0.664, 0.724]"
