@@ -1,17 +1,13 @@
 import pandas as pd
 
+from src.config import DATASET_PATH, PROCESSED_DIR, ROOT, TEST_YEARS, TRAIN_YEARS, VAL_YEARS
 from src.leakage import FORBIDDEN_RAW, TECHNICAL, check_no_leakage
-from src.load import EXPECTED_NOT_HIRED_1990_2025, OUT_DIR, ROOT, TABLES, fmt
+from src.load import EXPECTED_NOT_HIRED_1990_2025, TABLES, fmt
 
-
-
-
-OUT_PATH = OUT_DIR / "dataset_v1.parquet"
 EXPECTED_ROWS = 52_125
 
 YEARS = (1990, 2025)
-TRAIN_YEARS = (1990, 2017)
-SPLITS = {"train 1990-2017": (1990, 2017), "val 2018-2021": (2018, 2021), "test 2022-2025": (2022, 2025)}
+SPLITS = {"train 1990-2017": TRAIN_YEARS, "val 2018-2021": VAL_YEARS, "test 2022-2025": TEST_YEARS}
 MIN_PEAK_ROWS = 100
 
 KEYS = ["EXPID", "MEMBID", "YEAR", "SEASON", "PEAKID"]
@@ -44,11 +40,6 @@ CLIMB_FILTERS = (
 DISPUTED_FILTER = ("no MDISPUTED or MCLAIMED", lambda d: ~(d["MDISPUTED"] | d["MCLAIMED"]))
 
 
-
-
-
-
-
 def join(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
     members, exped, peaks = tables["members"], tables["exped"], tables["peaks"]
     df = members.merge(exped.drop(columns="PEAKID"), left_on=["EXPID", "MYEAR"], right_on=["EXPID", "YEAR"],
@@ -56,12 +47,6 @@ def join(tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
     df = df.merge(peaks, on="PEAKID", how="left", validate="many_to_one")
     assert len(df) == len(members), f"join gave {len(df)} rows instead of {len(members)}"
     return df
-
-
-
-
-
-
 
 
 def apply_filters(df: pd.DataFrame, filters) -> pd.DataFrame:
@@ -72,18 +57,9 @@ def apply_filters(df: pd.DataFrame, filters) -> pd.DataFrame:
     return df
 
 
-
-
-
-
 def clean_route(s: pd.Series) -> pd.Series:
     s = s.str.replace(ROUTE_POSTFACTUM_RE, "", regex=True).str.replace(ROUTE_UP_DOWN_RE, r"\1", regex=True).str.strip()
     return s.mask(s == "")
-
-
-
-
-
 
 
 def clean_values(df: pd.DataFrame) -> pd.DataFrame:
@@ -94,21 +70,10 @@ def clean_values(df: pd.DataFrame) -> pd.DataFrame:
     return df.assign(SEX=df["SEX"].mask(other_sex), HOST=df["HOST"].mask(unknown_host))
 
 
-
-
-
-
-
-
 def peak_group(df: pd.DataFrame) -> pd.Series:
     counts = df.loc[df["YEAR"].between(*TRAIN_YEARS), "PEAKID"].value_counts()
     keep = counts.index[counts >= MIN_PEAK_ROWS]
     return df["PEAKID"].where(df["PEAKID"].isin(keep), "OTHER")
-
-
-
-
-
 
 
 def anomalous_mask(df: pd.DataFrame, rule: dict) -> pd.Series:
@@ -118,22 +83,11 @@ def anomalous_mask(df: pd.DataFrame, rule: dict) -> pd.Series:
     return mask
 
 
-
-
-
-
-
-
 def anomalous_season(df: pd.DataFrame) -> pd.Series:
     flag = pd.Series(False, index=df.index)
     for rule in ANOMALOUS_SEASONS:
         flag |= anomalous_mask(df, rule)
     return flag
-
-
-
-
-
 
 
 def build_dataset(tables: dict[str, pd.DataFrame], exclude_disputed: bool = True) -> pd.DataFrame:
@@ -154,12 +108,6 @@ def build_dataset(tables: dict[str, pd.DataFrame], exclude_disputed: bool = True
     assert not df.duplicated(["EXPID", "YEAR", "MEMBID"]).any()
     check_no_leakage(df.drop(columns=["EXPID", "MEMBID", "ANOMALOUS_SEASON"] + TARGETS))
     return df
-
-
-
-
-
-
 
 
 def print_summary(df: pd.DataFrame, raw_route1: pd.Series) -> None:
@@ -184,21 +132,15 @@ def print_summary(df: pd.DataFrame, raw_route1: pd.Series) -> None:
     print(f"\n  Columns: {', '.join(df.columns)}")
 
 
-
-
-
-
-
-
 def main() -> None:
-    tables = {name: pd.read_parquet(OUT_DIR / f"{name}.parquet") for name in TABLES}
+    tables = {name: pd.read_parquet(PROCESSED_DIR / f"{name}.parquet") for name in TABLES}
     print("Filters (rows before -> after):")
     df = build_dataset(tables)
     assert len(df) == EXPECTED_ROWS, f"dataset_v1: {len(df)} rows, expected {EXPECTED_ROWS}"
 
-    df.to_parquet(OUT_PATH, index=False)
-    pd.testing.assert_frame_equal(pd.read_parquet(OUT_PATH), df)
-    print(f"\n{OUT_PATH.relative_to(ROOT)}  {OUT_PATH.stat().st_size / 2**20:.1f} MB")
+    df.to_parquet(DATASET_PATH, index=False)
+    pd.testing.assert_frame_equal(pd.read_parquet(DATASET_PATH), df)
+    print(f"\n{DATASET_PATH.relative_to(ROOT)}  {DATASET_PATH.stat().st_size / 2**20:.1f} MB")
 
     raw = join(tables).set_index(["EXPID", "YEAR", "MEMBID"])["ROUTE1"]
     print_summary(df, raw.reindex(pd.MultiIndex.from_frame(df[["EXPID", "YEAR", "MEMBID"]])).reset_index(drop=True))

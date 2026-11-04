@@ -40,10 +40,10 @@ exped,ROPE,Int64,0.0,0.0,0 ... 8700,Amt of fixed rope (meters),,after,
 exped,TOTMEMBERS,Int64,0.0,0.0,0 ... 99,Nbr of members,,before,"Feature. 0 in one 2025 expedition that has member records; kept, HIRED_PER_MEMBER is NaN there."
 exped,SMTMEMBERS,Int64,0.0,0.0,0 ... 39,Nbr of members on summit,,after,
 exped,MDEATHS,Int64,0.0,0.0,0 ... 10,Nbr of member deaths,,after,
-exped,TOTHIRED,Int64,0.0,0.0,0 ... 99,Nbr of hired personnel (above BC),,before,Feature; also used for Sherpa risk.
+exped,TOTHIRED,Int64,0.0,0.0,0 ... 99,Nbr of hired personnel (above BC),,before,"Feature; also used for Sherpa risk. Counts staff above BC, so not strictly known before the start; kept, see the leakage audit."
 exped,SMTHIRED,Int64,0.0,0.0,0 ... 48,Nbr of hired personnel on summit,,after,Used for Sherpa risk (not a feature).
 exped,HDEATHS,Int64,0.0,0.0,0 ... 11,Nbr of hired personnel deaths,,after,Used for Sherpa risk (not a feature).
-exped,NOHIRED,bool,0.0,0.0,False | True,No hired personnel used (above BC),,before,
+exped,NOHIRED,bool,0.0,0.0,False | True,No hired personnel used (above BC),,before,"Feature. Refers to staff above BC, so not strictly known before the start; kept, see the leakage audit."
 exped,O2USED,bool,0.0,0.0,False | True,Oxygen used (Y/N),,after,
 exped,O2NONE,bool,0.0,0.0,True | False,Oxygen not used (Y/N),,after,
 exped,O2CLIMB,bool,0.0,0.0,False | True,Oxygen climbing (Y/N),,after,"Actual use, not a plan: excluded from prediction."
