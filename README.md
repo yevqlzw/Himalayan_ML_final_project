@@ -38,6 +38,7 @@ Then run the notebooks in number order, with the project `.venv` as the kernel. 
 | `05_error_analysis` | Where and why the final model is wrong. |
 | `06_death_risk` | Death risk. Independent of the model. |
 | `07_model_figures` | Figures for the report and slides, drawn from saved tables. Nothing is trained here. |
+| `08_final_test` | The one run on the test years 2022-2025 with the frozen model. |
 
 ## Data flow
 
@@ -58,7 +59,7 @@ data/raw/HIMDATA/    original DBF files (not in git)
 data/processed/      parquet tables, dataset_v1, features_v1
 docs/                fields guide (input), data dictionary (generated)
 notebooks/           01 baselines, 02 tuning, 03 leakage audit, 04 SHAP, 05 error analysis, 06 death risk,
-                     07 model figures
+                     07 model figures, 08 final test
 src/                 config, load, data_dictionary, leakage, dataset, features, split, evaluate, models,
                      experiment_log, explain, leakage_audit, error_analysis, death_risk, style
 tests/               checks for the data pipeline, models and analysis
@@ -119,6 +120,8 @@ reports/figures/     figures for the report, named the same way
 | 9. Error analysis | The largest miss is Manaslu in autumn 2021: predicted 52%, actual 6%. | 88% of these rows come from expeditions that ended at a foresummit (`TERMREASON` 2), which does not count as the main peak. The same happened in 2016 (59%), while 2017-2020 have none. We keep the labels as recorded. Removing these 189 rows moves validation AUC only from 0.712 to 0.711, and 2021 stays weak without them (0.659). |
 | 9. Error analysis | Overall metrics could hide weak groups. | After calibration women have AUC 0.707 and men 0.711, with gaps of at most 2.4 pp, and age groups from 25 to 55+ range 0.688-0.707. The weak spots are 2020 (0.612, 136 rows), 2021 (0.675), winter (78 rows, gap +23 pp), Lhotse (0.544), Kangchenjunga (0.510) and climbers with 5 or more earlier expeditions (gap +10 pp). Small groups have wide intervals. |
 | 10. Structure | Names of notebooks and outputs carried author letters and an order unrelated to how the work runs, and paths and constants were repeated across files. | Notebooks are numbered in run order (01-06). Tables and figures are named after the notebook that writes them and live in `reports/tables` and `reports/figures`. Shared paths and constants are in `src/config.py` and the figure style in `src/style.py`. We reran the outputs and compared them, and no number changed. |
+| 11. Final test | A test result means little if the rules can still move after it is seen. | The rules are written in `08_final_test` before the run: the frozen model, Platt learned on non-anomalous validation rows, AUC on all test rows as the main number, intervals by expedition and by peak x year x season, the same metrics without `TERMREASON` 12 rows, and 2018-2019 as the reference for ageing. Nothing changes after the run. |
+| 11. Final test | The model refitted for the test has to be the one we validated. | The notebook refits it from `final_model.json` and stops unless validation AUC matches the experiment log within 0.001. |
 
 ## Experiment log
 

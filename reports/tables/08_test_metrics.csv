@@ -1,0 +1,7 @@
+split,probabilities,resampled by,groups,roc_auc,brier,log_loss
+test,before calibration,expedition,1027,"0.692 [0.673, 0.709]","0.221 [0.217, 0.226]","0.634 [0.623, 0.644]"
+test,before calibration,peak x year x season,120,"0.692 [0.657, 0.731]","0.221 [0.211, 0.232]","0.634 [0.611, 0.656]"
+test,after Platt,expedition,1027,"0.692 [0.673, 0.709]","0.224 [0.218, 0.231]","0.640 [0.626, 0.655]"
+test,after Platt,peak x year x season,120,"0.692 [0.657, 0.731]","0.224 [0.207, 0.242]","0.640 [0.602, 0.680]"
+validation,"after Platt, out of fold",expedition,922,"0.712 [0.684, 0.739]","0.216 [0.206, 0.225]","0.620 [0.597, 0.642]"
+validation,"after Platt, out of fold",peak x year x season,95,"0.712 [0.653, 0.760]","0.216 [0.194, 0.237]","0.620 [0.571, 0.668]"
