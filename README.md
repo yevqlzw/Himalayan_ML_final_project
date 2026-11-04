@@ -39,6 +39,7 @@ Then run the notebooks in number order, with the project `.venv` as the kernel. 
 | `06_death_risk` | Death risk. Independent of the model. |
 | `07_model_figures` | Figures for the report and slides, drawn from saved tables. Nothing is trained here. |
 | `08_final_test` | The one run on the test years 2022-2025 with the frozen model. |
+| `09_test_errors` | Why the test came out as it did. Written after the test and changes nothing. |
 
 ## Data flow
 
@@ -59,7 +60,7 @@ data/raw/HIMDATA/    original DBF files (not in git)
 data/processed/      parquet tables, dataset_v1, features_v1
 docs/                fields guide (input), data dictionary (generated)
 notebooks/           01 baselines, 02 tuning, 03 leakage audit, 04 SHAP, 05 error analysis, 06 death risk,
-                     07 model figures, 08 final test
+                     07 model figures, 08 final test, 09 test errors
 src/                 config, load, data_dictionary, leakage, dataset, features, split, evaluate, models,
                      experiment_log, explain, leakage_audit, error_analysis, death_risk, style
 tests/               checks for the data pipeline, models and analysis
@@ -122,6 +123,24 @@ reports/figures/     figures for the report, named the same way
 | 10. Structure | Names of notebooks and outputs carried author letters and an order unrelated to how the work runs, and paths and constants were repeated across files. | Notebooks are numbered in run order (01-06). Tables and figures are named after the notebook that writes them and live in `reports/tables` and `reports/figures`. Shared paths and constants are in `src/config.py` and the figure style in `src/style.py`. We reran the outputs and compared them, and no number changed. |
 | 11. Final test | A test result means little if the rules can still move after it is seen. | The rules are written in `08_final_test` before the run: the frozen model, Platt learned on non-anomalous validation rows, AUC on all test rows as the main number, intervals by expedition and by peak x year x season, the same metrics without `TERMREASON` 12 rows, and 2018-2019 as the reference for ageing. Nothing changes after the run. |
 | 11. Final test | The model refitted for the test has to be the one we validated. | The notebook refits it from `final_model.json` and stops unless validation AUC matches the experiment log within 0.001. |
+| 12. Test errors | Platt made the test probabilities slightly worse: log loss 0.634 to 0.640, predicted 57.8% against 52.7% actual. | We keep it, because the calibrator was fixed before the run, and we report both versions. The loss comes from 2022 (log loss 0.640 to 0.670). On 2023-2025 Platt changes almost nothing (0.632 to 0.631). |
+| 12. Test errors | On test AUC LightGBM does not reliably beat logistic regression: +0.008 [-0.004, 0.019]. | The final model stays. Its Brier and log loss are better at both levels of resampling (log loss 0.634 against 0.698), since logistic regression predicts too high in every test year. We report that the two rank climbers about equally. |
+| 12. Test errors | Manaslu in autumn 2022 is the largest miss by rows: predicted 65%, actual 18%, 408 rows. | 17 of 40 expeditions ended because of bad conditions or weather, and 9 of the 14 termination notes mention avalanches. Only 3% of rows ended at a foresummit, against 88% in 2021, so the recording effect does not explain it. The model does not see weather: it predicts 65-68% for this season every year from 2022 to 2025, while the actual share runs from 18% to 85%. Leaving this season out gives AUC 0.705, the largest change of any season (the next is +0.006). This does not replace the main number. |
+| 12. Test errors | Ama Dablam in spring is missed in all four test years: predicted 61%, actual 24%, 375 rows. | The actual share was low in every period (29%, 35%, 24%), and the peak x season rule stays close at 30%. The median `CROWD_ROUTE` went from 39 in 2018-2021 to 84, and the crowding group moved the prediction by +0.56 log-odds out of +0.69 in total. The model reads a crowd as a popular, successful route, which does not hold here. This is one more reason to treat crowding as a proxy. |
+| 12. Test errors | A third of test rows have an agency unseen up to 2017, which could explain the lower AUC. | It does not: AUC is 0.697 [0.664, 0.724] on those rows and 0.689 [0.666, 0.711] on the others. |
+| 12. Test errors | Manaslu and Ama Dablam explain only part of the fall from 0.739 on 2018-2019. | Inside one peak AUC is 0.638 against 0.677 on validation, and Everest falls from 0.707 to 0.630. We have no tested explanation for this and report it as open. |
+
+## Test result
+
+One run on 2022-2025 in `08_final_test`, with the rules fixed before it. The table shows predictions before calibration, with intervals by expedition. When whole peak x year x season groups are resampled, the AUC interval of the final model is [0.657, 0.731]. After Platt the final model has Brier 0.224 [0.218, 0.231] and log loss 0.640 [0.626, 0.655]. AUC by year is 0.679, 0.691, 0.703 and 0.694, against 0.739 [0.707, 0.767] on 2018-2019.
+
+| Model | ROC AUC (test) | Brier (test) | Log loss (test) |
+|---|---|---|---|
+| LightGBM final | 0.692 [0.673, 0.709] | 0.221 [0.217, 0.226] | 0.634 [0.623, 0.644] |
+| Logistic regression | 0.685 [0.667, 0.703] | 0.239 [0.229, 0.247] | 0.698 [0.673, 0.721] |
+| CatBoost typical | 0.673 [0.651, 0.694] | 0.229 [0.225, 0.234] | 0.650 [0.640, 0.660] |
+| Rule: peak x season rate | 0.606 [0.584, 0.626] | 0.250 [0.245, 0.256] | 0.695 [0.683, 0.708] |
+| Constant (train mean) | 0.500 [0.500, 0.500] | 0.269 [0.264, 0.274] | 0.732 [0.721, 0.742] |
 
 ## Experiment log
 
