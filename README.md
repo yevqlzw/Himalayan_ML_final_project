@@ -37,6 +37,7 @@ Then run the notebooks in number order, with the project `.venv` as the kernel. 
 | `04_shap` | What drives the final model. |
 | `05_error_analysis` | Where and why the final model is wrong. |
 | `06_death_risk` | Death risk. Independent of the model. |
+| `07_model_figures` | Figures for the report and slides, drawn from saved tables. Nothing is trained here. |
 
 ## Data flow
 
@@ -56,7 +57,8 @@ raw DBF --load--> exped / members / peaks.parquet   (whole database, for death r
 data/raw/HIMDATA/    original DBF files (not in git)
 data/processed/      parquet tables, dataset_v1, features_v1
 docs/                fields guide (input), data dictionary (generated)
-notebooks/           01 baselines, 02 tuning, 03 leakage audit, 04 SHAP, 05 error analysis, 06 death risk
+notebooks/           01 baselines, 02 tuning, 03 leakage audit, 04 SHAP, 05 error analysis, 06 death risk,
+                     07 model figures
 src/                 config, load, data_dictionary, leakage, dataset, features, split, evaluate, models,
                      experiment_log, explain, leakage_audit, error_analysis, death_risk, style
 tests/               checks for the data pipeline, models and analysis
