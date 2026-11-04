@@ -1,10 +1,11 @@
-"""Metrics with 95% bootstrap CI resampled by expedition, calibration plot, metrics by group."""
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.calibration import calibration_curve
 from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
 
-RANDOM_STATE = 42
-TARGET = "MSUCCESS"
+from src.config import GROUP, RANDOM_STATE, TARGET
+
 EPS = 1e-15
 METRICS = ("roc_auc", "brier", "log_loss")
 AGE_BINS = [0, 25, 35, 45, 55, 120]
@@ -26,11 +27,6 @@ def _point(y: np.ndarray, p: np.ndarray) -> dict:
 
 
 def evaluate(y_true, p, groups, n_boot: int = 1000, seed: int = RANDOM_STATE, alpha: float = 0.05) -> dict:
-    """ROC AUC, Brier, log loss, each as {estimate, ci_low, ci_high}.
-
-    The CI comes from resampling WHOLE expeditions (groups) with replacement n_boot times.
-    Each bootstrap sample is expressed as integer row weights, so no data is copied.
-    """
     y, p = _clean(y_true, p)
     codes, uniques = pd.factorize(np.asarray(groups))
     n_groups = len(uniques)
@@ -57,8 +53,39 @@ def evaluate(y_true, p, groups, n_boot: int = 1000, seed: int = RANDOM_STATE, al
     }
 
 
+def _weighted(y: np.ndarray, p: np.ndarray, w: np.ndarray) -> dict:
+    return {
+        "roc_auc": roc_auc_score(y, p, sample_weight=w),
+        "brier": np.average((p - y) ** 2, weights=w),
+        "log_loss": np.average(-(y * np.log(p) + (1 - y) * np.log(1 - p)), weights=w),
+    }
+
+
+def paired_difference(y_true, p_a, p_b, groups, n_boot: int = 1000, seed: int = RANDOM_STATE,
+                      alpha: float = 0.05) -> dict:
+    y, p_a = _clean(y_true, p_a)
+    _, p_b = _clean(y_true, p_b)
+    codes, uniques = pd.factorize(np.asarray(groups))
+    n_groups = len(uniques)
+    point_a, point_b = _point(y, p_a), _point(y, p_b)
+    rng = np.random.default_rng(seed)
+    boots = {m: np.full(n_boot, np.nan) for m in METRICS}
+    for b in range(n_boot):
+        w = np.bincount(rng.integers(0, n_groups, n_groups), minlength=n_groups)[codes]
+        if (w * y).sum() > 0 and (w * (1 - y)).sum() > 0:
+            a_scores, b_scores = _weighted(y, p_a, w), _weighted(y, p_b, w)
+            for m in METRICS:
+                boots[m][b] = a_scores[m] - b_scores[m]
+    lo, hi = 100 * alpha / 2, 100 * (1 - alpha / 2)
+    return {
+        m: {"estimate": float(point_a[m] - point_b[m]),
+            "ci_low": float(np.nanpercentile(boots[m], lo)),
+            "ci_high": float(np.nanpercentile(boots[m], hi))}
+        for m in METRICS
+    }
+
+
 def fmt(res: dict, digits: int = 3) -> dict:
-    """{'roc_auc': '0.812 [0.801, 0.823]', ...}"""
     return {m: f"{r['estimate']:.{digits}f} [{r['ci_low']:.{digits}f}, {r['ci_high']:.{digits}f}]"
             for m, r in res.items()}
 
@@ -70,22 +97,26 @@ def summary_row(name: str, y_true, p, groups, n_boot: int = 1000) -> dict:
             "_res": res, "n": len(np.asarray(y_true)), "mean_p": float(np.mean(p))}
 
 
+def evaluate_views(preds: dict, df: pd.DataFrame, n_boot: int = 1000) -> tuple[list[dict], list[dict]]:
+    clean = ~df["ANOMALOUS_SEASON"].to_numpy(dtype=bool)
+    y, groups = df[TARGET], df[GROUP]
+    all_rows = [summary_row(name, y, p, groups, n_boot) for name, p in preds.items()]
+    clean_rows = [summary_row(name, y[clean], np.asarray(p)[clean], groups[clean], n_boot) for name, p in preds.items()]
+    return all_rows, clean_rows
+
+
 def results_table(rows: list[dict]) -> pd.DataFrame:
     return pd.DataFrame([{k: v for k, v in r.items() if not k.startswith("_")} for r in rows]).set_index("model")
 
 
 def plot_calibration(y_true, probs, n_bins: int = 10, strategy: str = "quantile", ax=None,
                      title: str = "Calibration curve"):
-    """Reliability diagram. probs: one array or a dict {name: array}. Returns the matplotlib axis."""
-    import matplotlib.pyplot as plt
-    from sklearn.calibration import calibration_curve
-
     if not isinstance(probs, dict):
         probs = {"model": probs}
     y = np.asarray(y_true).astype(int)
     if ax is None:
         _, ax = plt.subplots(figsize=(5.5, 5.5))
-    ax.plot([0, 1], [0, 1], "k--", lw=1, label="perfect")
+    ax.plot([0, 1], [0, 1], color="#52514e", lw=1, label="perfect")
     for name, p in probs.items():
         frac, mean = calibration_curve(y, np.clip(np.asarray(p, float), EPS, 1 - EPS), n_bins=n_bins, strategy=strategy)
         ax.plot(mean, frac, marker="o", ms=4, lw=1.5, label=name)
@@ -104,11 +135,6 @@ def add_age_bins(df: pd.DataFrame) -> pd.Series:
 
 
 def metrics_by_group(df: pd.DataFrame, p, col: str, target: str = TARGET, min_rows: int = 30) -> pd.DataFrame:
-    """n, mean outcome, mean prediction, AUC, Brier, log loss per group.
-
-    col is e.g. 'PEAK_GROUP', 'SEASON' or 'AGE_BIN' (created from CALCAGE when missing).
-    Groups with fewer than min_rows rows are skipped; a single-class group gets NaN AUC.
-    """
     keys = add_age_bins(df) if col == "AGE_BIN" and "AGE_BIN" not in df else df[col]
     d = pd.DataFrame({"g": keys.astype(str).to_numpy(), "y": df[target].astype(int).to_numpy(),
                       "p": np.clip(np.asarray(p, float), EPS, 1 - EPS)})

@@ -3,16 +3,10 @@ from pathlib import Path
 import pandas as pd
 from dbfread import DBF
 
-
-
-
-ROOT = Path(__file__).resolve().parents[1]
-RAW_DIR = ROOT / "data" / "raw" / "HIMDATA"
-OUT_DIR = ROOT / "data" / "processed"
+from src.config import PROCESSED_DIR, RAW_DIR, ROOT
 
 TABLES = ("exped", "members", "peaks")
 
-                           #row/col count
 EXPECTED_SHAPE = {"exped": (11_854, 66), "members": (94_999, 78), "peaks": (503, 25)}
 EXPECTED_YEARS = (1905, 2025)
 EXPECTED_NOT_HIRED_1990_2025 = 58_100
@@ -21,11 +15,6 @@ YEAR_COLUMNS = {"YEAR", "MYEAR", "YOB", "TREKYEAR", "PYEAR"}
 ZERO_AS_MISSING = {"AGE", "CALCAGE"}
 
 KEYS = {"exped": ["EXPID", "YEAR"], "members": ["EXPID", "MYEAR", "MEMBID"], "peaks": ["PEAKID"]}
-
-
-
-
-
 
 
 def find_table(raw_dir: Path, name: str) -> Path:
@@ -38,18 +27,9 @@ def find_table(raw_dir: Path, name: str) -> Path:
     return dbf
 
 
-
-
-
-
-
 def _to_text(s: pd.Series) -> pd.Series:
     s = s.astype("str").str.strip()
     return s.mask(s == "")
-
-
-
-
 
 
 def convert_column(s: pd.Series, field) -> pd.Series:
@@ -70,48 +50,18 @@ def convert_column(s: pd.Series, field) -> pd.Series:
     raise ValueError(f"Unknown field type {field.name}: {field.type}")
 
 
-
-
-
-
-
-
-
-
 def load_table(path: Path) -> pd.DataFrame:
     table = DBF(path, load=False, encoding="cp1252", char_decode_errors="replace")
     raw = pd.DataFrame(list(table), columns=table.field_names, dtype=object)
     return pd.DataFrame({f.name: convert_column(raw[f.name], f) for f in table.fields})
 
 
-
-
-
-
-
-
-
-
-
-
 def load_all(raw_dir: Path = RAW_DIR) -> dict[str, pd.DataFrame]:
     return {name: load_table(find_table(raw_dir, name)) for name in TABLES}
 
 
-
-
-
-
-
-
 def not_hired_1990_2025(members: pd.DataFrame) -> int:
     return int((~members["HIRED"] & members["MYEAR"].between(1990, 2025)).sum())
-
-
-
-
-
-
 
 
 def check(tables: dict[str, pd.DataFrame]) -> None:
@@ -138,18 +88,8 @@ def check(tables: dict[str, pd.DataFrame]) -> None:
     assert exped["PEAKID"].isin(peaks["PEAKID"]).all(), "expeditions on peaks missing from peaks"
 
 
-
-
-
-
-
-
 def fmt(n: int) -> str:
     return f"{n:,}"
-
-
-
-
 
 
 def print_summary(tables: dict[str, pd.DataFrame]) -> None:
@@ -183,21 +123,14 @@ def print_summary(tables: dict[str, pd.DataFrame]) -> None:
           f"YOB = NaN {fmt(base['YOB'].isna().sum())}")
 
 
-
-
-
-
-
-
-
 def main() -> None:
     tables = load_all()
     check(tables)
     print("All control checks passed.")
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     for name, df in tables.items():
-        path = OUT_DIR / f"{name}.parquet"
+        path = PROCESSED_DIR / f"{name}.parquet"
         df.to_parquet(path, index=False)
         pd.testing.assert_frame_equal(pd.read_parquet(path), df)
         print(f"  {path.relative_to(ROOT)}  {path.stat().st_size / 2**20:.1f} MB")

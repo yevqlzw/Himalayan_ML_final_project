@@ -1,13 +1,19 @@
 import pandas as pd
 import pytest
 
-from src.features import (CATEGORICAL, FEATURES, OUT_PATH, crowd, experience, hired_per_member,
+from src.config import FEATURES_PATH
+from src.features import (CATEGORICAL, FEATURES, crowd, to_number, experience, hired_per_member,
                           peak_climbed_before, peak_success_prior, person_id, time_key)
 from src.leakage import check_no_leakage
 
 
 def ints(*values) -> pd.Series:
     return pd.Series(values, dtype="Int64")
+
+
+def test_to_number_keeps_missing_values():
+    out = to_number(pd.Series([True, None], dtype="boolean"))
+    assert out.iloc[0] == 1.0 and pd.isna(out.iloc[1])
 
 
 def test_time_key_orders_seasons_and_puts_unknown_last():
@@ -99,9 +105,9 @@ def test_feature_lists_are_consistent():
 
 @pytest.fixture(scope="module")
 def features() -> pd.DataFrame:
-    if not OUT_PATH.exists():
+    if not FEATURES_PATH.exists():
         pytest.skip("run python -m src.features first")
-    return pd.read_parquet(OUT_PATH).set_index(["EXPID", "YEAR", "MEMBID"]).sort_index()
+    return pd.read_parquet(FEATURES_PATH).set_index(["EXPID", "YEAR", "MEMBID"]).sort_index()
 
 
 def test_features_file_has_all_features(features):
@@ -114,6 +120,8 @@ def test_features_file_has_all_features(features):
     (("AMAD92309", 1992, "09"), (4, 0, 0, 0)),
     (("AMAD94103", 1994, "04"), (5, 2, 1, 0)),
 ])
+
+
 def test_experience_real_records(features, key, expected):
     row = features.loc[key]
     assert tuple(row[["PRIOR_EXPEDITIONS", "PRIOR_SUMMITS", "PRIOR_EXPEDITIONS_PEAK", "PRIOR_SUMMITS_PEAK"]]) == expected
@@ -128,6 +136,8 @@ def test_experience_real_record_without_yob(features):
     (("AMAD17301", 2017), (246, 349, 246, 349, 58, 1 / 3)),
     (("ANN113302", 2013), (2, 2, 2, 2, 1, 0.0)),
 ])
+
+
 def test_crowd_and_team_real_records(features, expedition, expected):
     row = features.loc[expedition].iloc[0]
     columns = ["CROWD_PEAK", "CROWD_PEAK_TOTAL", "CROWD_ROUTE", "CROWD_ROUTE_TOTAL", "OTHER_EXPEDITIONS_PEAK",
@@ -140,6 +150,8 @@ def test_crowd_and_team_real_records(features, expedition, expected):
     (("AMAD17301", 2017), 0.507478, 5_832),
     (("ANN113302", 2013), 0.140837, 1_170),
 ])
+
+
 def test_peak_success_prior_real_records(features, expedition, rate, attempts):
     row = features.loc[expedition].iloc[0]
     assert row["PEAK_SUCCESS_PRIOR"] == pytest.approx(rate, abs=1e-6)
@@ -151,5 +163,7 @@ def test_peak_success_prior_real_records(features, expedition, rate, attempts):
     (("CHAN10301", 2010), False),
     (("CHAN25201", 2025), True),
 ])
+
+
 def test_peak_climbed_before_real_records(features, expedition, expected):
     assert features.loc[expedition].iloc[0]["PEAK_CLIMBED_BEFORE"] == expected

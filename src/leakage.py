@@ -5,8 +5,7 @@ def _numbered(prefix: str, n: int) -> set[str]:
     return {f"{prefix}{i}" for i in range(1, n + 1)}
 
 
-
-_PLAN = (
+_OUTCOME_FIELDS = (
     _numbered("SUCCESS", 4)
     | {"SMTMEMBERS", "SMTHIRED", "SMTDATE", "SMTDAYS", "HIGHPOINT", "TERMREASON", "TERMDATE",
        "TERMNOTE", "TOTDAYS", "MDEATHS", "HDEATHS", "ACCIDENTS"}
@@ -18,9 +17,7 @@ _PLAN = (
 )
 
 
-
-
-_GUIDE_REVIEW = (
+_AFTER_CLIMB_FIELDS = (
     _numbered("ASCENT", 4)
     | {"CLAIMED", "DISPUTED", "SMTTIME", "OTHERSMTS", "CAMPSITES", "ROUTEMEMO", "ACHIEVMENT",
        "TRAVERSE", "SKI", "PARAPENTE", "CAMPS", "ROPE", "O2USED", "O2NONE", "O2DESCENT", "O2SLEEP",
@@ -33,10 +30,7 @@ _GUIDE_REVIEW = (
 )
 
 
-
-
-
-_DECIDED_2026_11_02 = {
+_NOT_KNOWN_AT_START = {
     "O2CLIMB", "BCDATE", "BCONLY", "NOTTOBC",
     "OPEN", "RESTRICT", "PSTATUS", "UNLISTED", "TREKKING", "TREKYEAR",
     "PYEAR", "PSEASON", "PEXPID", "PSMTDATE", "PCOUNTRY", "PSUMMITERS", "PSMTNOTE",
@@ -44,27 +38,15 @@ _DECIDED_2026_11_02 = {
 }
 
 
-
-
-FORBIDDEN_RAW = frozenset(_PLAN | _GUIDE_REVIEW | _DECIDED_2026_11_02)
+FORBIDDEN_RAW = frozenset(_OUTCOME_FIELDS | _AFTER_CLIMB_FIELDS | _NOT_KNOWN_AT_START)
 FORBIDDEN = FORBIDDEN_RAW | {"ANOMALOUS_SEASON"}
 
 TECHNICAL = frozenset({"CHKSUM", "MCHKSUM", "PRIMRTE", "PRIMMEM", "PRIMREF", "PRIMID", "HCN", "EXPID", "MEMBID"})
 
 
-
-
-
-
-
 def _blocked(column, names: frozenset[str]) -> bool:
     name = str(column).upper()
     return any(name == field or name.startswith(f"{field}_") for field in names)
-
-
-
-
-
 
 
 def check_no_leakage(df: pd.DataFrame) -> None:

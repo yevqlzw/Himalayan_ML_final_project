@@ -1,0 +1,6 @@
+model,val_roc_auc,val_log_loss
+final model,0.7116,0.6219
++ HIGHPOINT,0.8298,0.4805
++ TERMREASON,0.8472,0.453
++ SMTMEMBERS,0.9161,0.3638
++ MPERHIGHPT,0.9782,0.1256

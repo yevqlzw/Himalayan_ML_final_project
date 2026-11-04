@@ -3,15 +3,12 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.config import DOCS_DIR, PROCESSED_DIR, ROOT
 from src.leakage import FORBIDDEN_RAW, TECHNICAL
-from src.load import EXPECTED_SHAPE, OUT_DIR, ROOT, TABLES
+from src.load import EXPECTED_SHAPE, TABLES
 
-
-
-
-
-GUIDE_PATH = ROOT / "docs" / "himalayan_fields_guide.txt"
-OUT_CSV = ROOT / "docs" / "data_dictionary.csv"
+GUIDE_PATH = DOCS_DIR / "himalayan_fields_guide.txt"
+OUT_CSV = DOCS_DIR / "data_dictionary.csv"
 
 SECTIONS = {
     "Peaks Table (PEAKS)": "peaks",
@@ -63,7 +60,8 @@ NOTES = {
     "COMRTE": UNKNOWN_IS_NA,
     "STDRTE": UNKNOWN_IS_NA,
     "PEAKID": "Feature; peaks with < 100 records -> OTHER.",
-    "TOTHIRED": "Feature; also used for Sherpa risk.",
+    "TOTHIRED": "Feature; also used for Sherpa risk. Counts staff above BC, so not strictly known before the start; kept, see the leakage audit.",
+    "NOHIRED": "Feature. Refers to staff above BC, so not strictly known before the start; kept, see the leakage audit.",
     "SMTHIRED": SHERPA_RISK,
     "HDEATHS": SHERPA_RISK,
     "OPEN": CURRENT_PEAK_STATE,
@@ -75,12 +73,6 @@ NOTES = {
     **dict.fromkeys(["PYEAR", "PSEASON", "PEXPID", "PSMTDATE", "PCOUNTRY", "PSUMMITERS", "PSMTNOTE"], FIRST_ASCENT),
     **dict.fromkeys(["PEAKMEMO", "REFERMEMO", "PHOTOMEMO"], CURRENT_DB_STATE),
 }
-
-
-
-
-
-
 
 
 def parse_guide(path: Path = GUIDE_PATH) -> dict[tuple[str, str], dict]:
@@ -100,22 +92,12 @@ def parse_guide(path: Path = GUIDE_PATH) -> dict[tuple[str, str], dict]:
     return fields
 
 
-
-
-
-
-
 def timing(field: str) -> str:
     if field in FORBIDDEN_RAW:
         return "after"
     if field in TECHNICAL:
         return "technical"
     return "before"
-
-
-
-
-
 
 
 def examples(s: pd.Series, has_codes: bool) -> str:
@@ -130,11 +112,6 @@ def examples(s: pd.Series, has_codes: bool) -> str:
     return " | ".join(text.value_counts().head(3).index)
 
 
-
-
-
-
-
 def model_rows(tables: dict[str, pd.DataFrame]) -> dict[str, pd.Series]:
     exped, members, peaks = tables["exped"], tables["members"], tables["peaks"]
     exped_rows = exped["YEAR"].between(1990, 2025)
@@ -143,11 +120,6 @@ def model_rows(tables: dict[str, pd.DataFrame]) -> dict[str, pd.Series]:
         "members": members["MYEAR"].between(1990, 2025) & ~members["HIRED"],
         "peaks": peaks["PEAKID"].isin(exped.loc[exped_rows, "PEAKID"]),
     }
-
-
-
-
-
 
 
 def build(tables: dict[str, pd.DataFrame], guide: dict[tuple[str, str], dict]) -> pd.DataFrame:
@@ -172,12 +144,6 @@ def build(tables: dict[str, pd.DataFrame], guide: dict[tuple[str, str], dict]) -
     return pd.DataFrame(records)
 
 
-
-
-
-
-
-
 def check(tables: dict[str, pd.DataFrame], guide: dict[tuple[str, str], dict]) -> None:
     data_fields = {(t, f) for t in TABLES for f in tables[t].columns}
     assert len(data_fields) == sum(cols for _, cols in EXPECTED_SHAPE.values())
@@ -186,11 +152,6 @@ def check(tables: dict[str, pd.DataFrame], guide: dict[tuple[str, str], dict]) -
     names = {f for _, f in data_fields}
     listed = FORBIDDEN_RAW | TECHNICAL | NOTES.keys()
     assert listed <= names, f"unknown fields in the lists: {sorted(listed - names)}"
-
-
-
-
-
 
 
 def unknown_codes(tables: dict[str, pd.DataFrame], guide: dict[tuple[str, str], dict]) -> dict[str, list]:
@@ -203,14 +164,8 @@ def unknown_codes(tables: dict[str, pd.DataFrame], guide: dict[tuple[str, str], 
     return found
 
 
-
-
-
-
-
-
 def main() -> None:
-    tables = {name: pd.read_parquet(OUT_DIR / f"{name}.parquet") for name in TABLES}
+    tables = {name: pd.read_parquet(PROCESSED_DIR / f"{name}.parquet") for name in TABLES}
     guide = parse_guide()
     check(tables, guide)
     dictionary = build(tables, guide)

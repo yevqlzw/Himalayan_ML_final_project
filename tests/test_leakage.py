@@ -1,8 +1,9 @@
 import pandas as pd
 import pytest
 
+from src.config import DATASET_PATH
 from src.data_dictionary import OUT_CSV, parse_guide
-from src.dataset import OUT_PATH, ROUTE_POSTFACTUM_RE, TARGETS, clean_values
+from src.dataset import ROUTE_POSTFACTUM_RE, TARGETS, clean_values
 from src.leakage import FORBIDDEN_RAW, TECHNICAL, check_no_leakage
 
 PLAN_FEATURES = [
@@ -24,6 +25,8 @@ def test_plan_features_pass():
     "MSUCCESS", "DEATH", "O2CLIMB", "MO2USED", "HIGHPOINT", "highpoint_bin", "PYEAR_lag",
     "BCDATE", "PSTATUS", "ANOMALOUS_SEASON", "EXPID", "MEMBID",
 ])
+
+
 def test_forbidden_or_technical_fail(column):
     with pytest.raises(ValueError):
         check_no_leakage(frame("CALCAGE", column))
@@ -55,15 +58,15 @@ def test_clean_values_turns_unknown_into_nan():
     assert out["HOST"].isna().tolist() == [False, True, False, True]
 
 
-@pytest.mark.skipif(not OUT_PATH.exists(), reason="run python -m src.dataset first")
+@pytest.mark.skipif(not DATASET_PATH.exists(), reason="run python -m src.dataset first")
 def test_dataset_v1_has_no_unknown_codes():
-    df = pd.read_parquet(OUT_PATH)
+    df = pd.read_parquet(DATASET_PATH)
     assert set(df["SEX"].dropna()) <= {"M", "F"}
     assert not df["HOST"].eq(0).any()
 
 
-@pytest.mark.skipif(not OUT_PATH.exists(), reason="run python -m src.dataset first")
+@pytest.mark.skipif(not DATASET_PATH.exists(), reason="run python -m src.dataset first")
 def test_dataset_v1_features_have_no_leakage():
-    df = pd.read_parquet(OUT_PATH)
+    df = pd.read_parquet(DATASET_PATH)
     check_no_leakage(df.drop(columns=["EXPID", "MEMBID", "ANOMALOUS_SEASON"] + TARGETS))
     assert not df["ROUTE1"].str.contains(ROUTE_POSTFACTUM_RE, regex=True, na=False).any()

@@ -1,0 +1,5 @@
+comparison,roc_auc,brier,log_loss
+LightGBM tuned (5 seeds) minus logreg,"0.0257 [0.0112, 0.0392]","-0.0117 [-0.0182, -0.0052]","-0.0340 [-0.0513, -0.0169]"
+LightGBM tuned (5 seeds) minus peak x season rule,"0.1108 [0.0846, 0.1390]","-0.0331 [-0.0410, -0.0253]","-0.0708 [-0.0874, -0.0538]"
+LightGBM tuned (5 seeds) minus CatBoost typical (5 seeds),"0.0225 [0.0081, 0.0377]","-0.0078 [-0.0115, -0.0039]","-0.0175 [-0.0261, -0.0088]"
+LightGBM tuned (5 seeds) minus CatBoost tuned (5 seeds),"0.0183 [0.0033, 0.0342]","-0.0075 [-0.0112, -0.0036]","-0.0169 [-0.0252, -0.0083]"

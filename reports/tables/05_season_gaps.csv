@@ -1,0 +1,33 @@
+name,PEAK_GROUP,YEAR,SEASON,n,expeditions,mean_y,mean_p,gap,foresummit
+Manaslu,MANA,2021,Autumn,189,21,0.063,0.52,0.457,0.878
+Dhaulagiri I,DHA1,2021,Spring,39,6,0.0,0.409,0.409,0.0
+Lhotse,LHOT,2021,Spring,88,23,0.341,0.641,0.3,0.0
+Ama Dablam,AMAD,2019,Spring,49,13,0.204,0.43,0.226,0.0
+Everest,EVER,2021,Spring,409,48,0.472,0.695,0.223,0.0
+Other peaks,OTHER,2019,Spring,47,14,0.128,0.296,0.169,0.0
+Other peaks,OTHER,2018,Spring,37,9,0.27,0.415,0.145,0.0
+Himlung Himal,HIML,2021,Autumn,53,6,0.226,0.364,0.138,0.0
+Dhaulagiri I,DHA1,2019,Autumn,30,6,0.133,0.249,0.115,0.0
+Himlung Himal,HIML,2019,Autumn,92,14,0.391,0.468,0.076,0.0
+Ama Dablam,AMAD,2019,Autumn,355,59,0.538,0.604,0.066,0.0
+Lhotse,LHOT,2019,Spring,78,23,0.538,0.591,0.053,0.0
+Other peaks,OTHER,2018,Autumn,133,30,0.346,0.394,0.048,0.03
+Kangchenjunga,KANG,2018,Spring,45,7,0.467,0.504,0.037,0.0
+Ama Dablam,AMAD,2018,Autumn,314,71,0.529,0.565,0.036,0.0
+Lhotse,LHOT,2018,Spring,83,25,0.602,0.606,0.003,0.0
+Ama Dablam,AMAD,2021,Autumn,219,25,0.639,0.636,-0.004,0.0
+Everest,EVER,2018,Spring,529,85,0.752,0.741,-0.011,0.0
+Himlung Himal,HIML,2018,Autumn,80,19,0.412,0.387,-0.026,0.0
+Everest,EVER,2019,Spring,521,89,0.762,0.733,-0.029,0.0
+Ama Dablam,AMAD,2020,Autumn,33,6,0.576,0.52,-0.055,0.0
+Manaslu,MANA,2019,Autumn,254,47,0.74,0.652,-0.088,0.0
+Other peaks,OTHER,2021,Autumn,102,20,0.451,0.36,-0.091,0.0
+Other peaks,OTHER,2019,Autumn,103,31,0.524,0.407,-0.117,0.019
+Cho Oyu,CHOY,2018,Autumn,90,16,0.711,0.566,-0.145,0.111
+Dhaulagiri I,DHA1,2021,Autumn,44,7,0.568,0.415,-0.153,0.0
+Annapurna I,ANN1,2021,Spring,50,7,0.72,0.494,-0.226,0.0
+Everest,EVER,2020,Spring,31,2,0.71,0.472,-0.237,0.0
+Makalu,MAKA,2019,Spring,54,9,0.759,0.478,-0.281,0.0
+Manaslu,MANA,2018,Autumn,198,30,0.768,0.478,-0.29,0.0
+Putha Hiunchuli,PUTH,2019,Autumn,30,7,0.767,0.438,-0.329,0.0
+Kangchenjunga,KANG,2019,Spring,30,5,0.933,0.49,-0.443,0.0

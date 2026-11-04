@@ -1,22 +1,15 @@
 import unicodedata
 
+import numpy as np
 import pandas as pd
 
-from src.dataset import KEYS, OUT_PATH as DATASET_PATH, TARGETS, clean_route
+from src.config import DATASET_PATH, FEATURES_PATH, PROCESSED_DIR, ROOT
+from src.dataset import KEYS, TARGETS, clean_route
 from src.leakage import check_no_leakage
-from src.load import OUT_DIR, ROOT, TABLES, fmt
+from src.load import TABLES, fmt
 
-
-
-
-OUT_PATH = OUT_DIR / "features_v1.parquet"
-PREVIEW_PATH = OUT_DIR / "features_v1_preview.csv"
 EXPECTED_ROWS = 52_125
 SMOOTHING = 20
-
-
-
-
 
 PARTICIPANT = ["CALCAGE", "SEX", "CITIZEN", "LEADER", "DEPUTY", "STATUS", "SUPPORT", "DISABLED"]
 EXPEDITION = ["PEAK_GROUP", "ROUTE1", "SEASON", "YEAR", "HOST", "TOTMEMBERS", "TOTHIRED", "NOHIRED",
@@ -31,16 +24,12 @@ FEATURES = PARTICIPANT + EXPEDITION + PEAK + DERIVED
 CATEGORICAL = ["SEX", "CITIZEN", "STATUS", "PEAK_GROUP", "ROUTE1", "SEASON", "HOST", "AGENCY", "HIMAL", "REGION"]
 
 
-
-
+def to_number(s: pd.Series) -> pd.Series:
+    return pd.Series(s.astype("Float64").to_numpy(dtype=float, na_value=np.nan), index=s.index)
 
 
 def time_key(year: pd.Series, season: pd.Series) -> pd.Series:
     return year * 10 + season.where(season != 0, 9)
-
-
-
-
 
 
 def normalize_name(s: pd.Series) -> pd.Series:
@@ -49,16 +38,9 @@ def normalize_name(s: pd.Series) -> pd.Series:
     return ascii_text.str.replace(r"[^a-z0-9]+", " ", regex=True).str.strip()
 
 
-
-
-
 def person_id(df: pd.DataFrame) -> pd.Series:
     pid = normalize_name(df["FNAME"]) + "|" + normalize_name(df["LNAME"]) + "|" + df["YOB"].astype(str)
     return pid.where(df["YOB"].notna())
-
-
-
-
 
 
 def prior_counts(history: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
@@ -70,11 +52,6 @@ def prior_counts(history: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     return per_time[keys + ["TIME", "PRIOR_N", "PRIOR_S"]]
 
 
-
-
-
-
-
 def experience(rows: pd.DataFrame, history: pd.DataFrame) -> pd.DataFrame:
     out = pd.DataFrame(index=rows.index)
     for suffix, keys in (("", ["PERSON_ID"]), ("_PEAK", ["PERSON_ID", "PEAKID"])):
@@ -83,10 +60,6 @@ def experience(rows: pd.DataFrame, history: pd.DataFrame) -> pd.DataFrame:
         out[f"PRIOR_EXPEDITIONS{suffix}"] = prior["PRIOR_N"].to_numpy()
         out[f"PRIOR_SUMMITS{suffix}"] = prior["PRIOR_S"].to_numpy()
     return out.astype("Int64")
-
-
-
-
 
 
 def crowd(exped: pd.DataFrame) -> pd.DataFrame:
@@ -101,25 +74,12 @@ def crowd(exped: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-
-
-
-
 def hired_per_member(df: pd.DataFrame) -> pd.Series:
     return df["TOTHIRED"] / df["TOTMEMBERS"].where(df["TOTMEMBERS"] > 0)
 
 
-
-
-
-
 def climbing_population(members: pd.DataFrame) -> pd.DataFrame:
     return members[~members["HIRED"] & ~members["BCONLY"] & ~members["NOTTOBC"] & (members["MSMTTERM"] != 17)]
-
-
-
-
-
 
 
 def prior_by_year(population: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
@@ -128,12 +88,6 @@ def prior_by_year(population: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     per_year["PRIOR_N"] = cumulative["n"] - per_year["n"]
     per_year["PRIOR_S"] = cumulative["s"] - per_year["s"]
     return per_year.rename(columns={"MYEAR": "YEAR"})[keys + ["YEAR", "PRIOR_N", "PRIOR_S"]]
-
-
-
-
-
-
 
 
 def peak_success_prior(rows: pd.DataFrame, members: pd.DataFrame, smoothing: float = SMOOTHING) -> pd.DataFrame:
@@ -147,18 +101,9 @@ def peak_success_prior(rows: pd.DataFrame, members: pd.DataFrame, smoothing: flo
                         index=rows.index).astype({"PEAK_ATTEMPTS_PRIOR": "Int64"})
 
 
-
-
-
-
 def peak_climbed_before(rows: pd.DataFrame, peaks: pd.DataFrame) -> pd.Series:
     first = time_key(peaks["PYEAR"], peaks["PSEASON"]).set_axis(peaks["PEAKID"])
     return (rows["PEAKID"].map(first) < rows["TIME"]).fillna(False).astype(bool)
-
-
-
-
-
 
 
 def build_features(dataset: pd.DataFrame, tables: dict[str, pd.DataFrame]) -> pd.DataFrame:
@@ -182,10 +127,6 @@ def build_features(dataset: pd.DataFrame, tables: dict[str, pd.DataFrame]) -> pd
     return df
 
 
-
-
-
-
 def print_summary(df: pd.DataFrame) -> None:
     print(f"\n{fmt(len(df))} rows x {df.shape[1]} columns; {len(FEATURES)} features "
           f"({len(CATEGORICAL)} categorical)")
@@ -202,25 +143,17 @@ def print_summary(df: pd.DataFrame) -> None:
     print(f"Peak not yet climbed at expedition time: {fmt((~df['PEAK_CLIMBED_BEFORE']).sum())} rows")
 
 
-
-
-
-
-
-
 def main() -> None:
-    tables = {name: pd.read_parquet(OUT_DIR / f"{name}.parquet") for name in TABLES}
+    tables = {name: pd.read_parquet(PROCESSED_DIR / f"{name}.parquet") for name in TABLES}
     dataset = pd.read_parquet(DATASET_PATH)
     df = build_features(dataset, tables)
     assert len(df) == EXPECTED_ROWS, f"features_v1: {len(df)} rows, expected {EXPECTED_ROWS}"
     assert not df.duplicated(["EXPID", "YEAR", "MEMBID"]).any()
 
-    df.to_parquet(OUT_PATH, index=False)
-    pd.testing.assert_frame_equal(pd.read_parquet(OUT_PATH), df)
-    print(f"{OUT_PATH.relative_to(ROOT)}  {OUT_PATH.stat().st_size / 2**20:.1f} MB")
+    df.to_parquet(FEATURES_PATH, index=False)
+    pd.testing.assert_frame_equal(pd.read_parquet(FEATURES_PATH), df)
+    print(f"{FEATURES_PATH.relative_to(ROOT)}  {FEATURES_PATH.stat().st_size / 2**20:.1f} MB")
 
-    df.to_csv(PREVIEW_PATH, index=False, sep=";", decimal=",", encoding="utf-8-sig")
-    print(f"{PREVIEW_PATH.relative_to(ROOT)}  {PREVIEW_PATH.stat().st_size / 2**20:.1f} MB (for viewing only)")
     print_summary(df)
 
 
