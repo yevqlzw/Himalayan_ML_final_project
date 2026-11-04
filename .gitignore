@@ -6,6 +6,8 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .pytest_cache/
+catboost_info/
+.idea/
 
 .DS_Store
 Thumbs.db
