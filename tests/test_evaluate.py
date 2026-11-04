@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.evaluate import evaluate, metrics_by_group, plot_calibration
+from src.evaluate import METRICS, evaluate, evaluate_views, metrics_by_group, paired_difference, plot_calibration
 
 
 def toy(n_groups=200, per_group=5, seed=0):
@@ -49,8 +49,8 @@ def test_metrics_by_group_handles_small_and_single_class_groups():
                        "CALCAGE": [20.0, 30.0, 40.0, 50.0, 60.0] * 26})
     p = np.full(len(df), 0.5)
     out = metrics_by_group(df, p, "PEAK_GROUP", min_rows=30)
-    assert list(out.index) == ["A", "B"]                 # C has < 30 rows
-    assert np.isnan(out.loc["B", "roc_auc"])             # single class
+    assert list(out.index) == ["A", "B"]
+    assert np.isnan(out.loc["B", "roc_auc"])
     ages = metrics_by_group(df, p, "AGE_BIN", min_rows=1)
     assert ages["n"].sum() == len(df)
 
@@ -61,3 +61,35 @@ def test_plot_calibration_returns_axis():
     y, p, _ = toy()
     ax = plot_calibration(y, {"m": p})
     assert len(ax.lines) == 2
+
+
+def test_paired_difference_of_identical_models_is_zero():
+    y, p, g = toy()
+    res = paired_difference(y, p, p, g, n_boot=50)
+    for m in METRICS:
+        assert res[m] == {"estimate": 0.0, "ci_low": 0.0, "ci_high": 0.0}
+
+
+def test_paired_difference_finds_the_better_model():
+    y, p, g = toy()
+    res = paired_difference(y, p, np.full(len(y), 0.5), g, n_boot=200)
+    assert res["roc_auc"]["ci_low"] > 0
+    assert res["brier"]["ci_high"] < 0
+    assert res["log_loss"]["ci_high"] < 0
+
+
+def test_paired_difference_estimate_matches_evaluate():
+    y, p, g = toy()
+    other = np.clip(p + 0.05, 0.01, 0.99)
+    res = paired_difference(y, p, other, g, n_boot=10)
+    a, b = evaluate(y, p, g, n_boot=2), evaluate(y, other, g, n_boot=2)
+    for m in METRICS:
+        assert res[m]["estimate"] == pytest.approx(a[m]["estimate"] - b[m]["estimate"])
+
+
+def test_evaluate_views_drops_anomalous_rows_from_the_second_view():
+    y, p, g = toy()
+    df = pd.DataFrame({"MSUCCESS": y, "EXPID": g, "ANOMALOUS_SEASON": g < 50})
+    rows_all, rows_clean = evaluate_views({"model": p}, df, n_boot=10)
+    assert rows_all[0]["n"] == len(df)
+    assert rows_clean[0]["n"] == int((g >= 50).sum())
